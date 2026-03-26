@@ -9,6 +9,20 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="FluentValidation">
+        <HintPath>..\..\..\.nuget\packages\fluentvalidation\12.1.1\lib\net8.0\FluentValidation.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>
