@@ -11,15 +11,19 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
     public DbSet<Grade> Grades => Set<Grade>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        // Precise decimal for grades
         modelBuilder.Entity<Grade>()
             .Property(g => g.Value)
             .HasPrecision(5, 2);
 
-        // Define Many-to-Many Student <-> Course
         modelBuilder.Entity<Student>()
             .HasMany(s => s.Courses)
             .WithMany(c => c.Students);
+        
+        modelBuilder.Entity<Course>()
+            .HasOne(c => c.Teacher)
+            .WithMany(t => t.Courses)
+            .HasForeignKey(c => c.TeacherId)
+            .OnDelete(DeleteBehavior.Restrict);
             
         base.OnModelCreating(modelBuilder);
     }
