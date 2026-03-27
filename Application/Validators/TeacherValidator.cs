@@ -1,26 +1,26 @@
 using Domain.Entities;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Validators;
 
-public class StudentValidator : AbstractValidator<Student>
+public class TeacherValidator : AbstractValidator<Teacher>
 {
     private readonly CollegeDbContext _context;
 
-    public StudentValidator(CollegeDbContext context)
+    public TeacherValidator(CollegeDbContext context)
     {
         _context = context;
 
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
-            .MustAsync(BeUniqueName).WithMessage("A student with this name already exists.");
+            .MustAsync(BeUniqueName).WithMessage("A teacher with this name already exists.");
     }
 
     private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
-        return !await _context.Students.AnyAsync(s => s.Name == name, cancellationToken);
+        return !await _context.Teachers.AnyAsync(s => s.Name == name, cancellationToken);
     }
 }

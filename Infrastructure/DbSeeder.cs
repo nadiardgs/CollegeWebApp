@@ -37,11 +37,29 @@ public static class DbSeeder
             Name = "Mary Smith",
             Courses = [course]
         };
+        
+        var grade1 = new Grade 
+        { 
+            Id = Guid.NewGuid(), 
+            Value = 9.5m, 
+            StudentId = student1.Id, 
+            CourseId = course.Id
+        };
+        
+        var grade2 = new Grade 
+        { 
+            Id = Guid.NewGuid(), 
+            Value = 9.5m, 
+            StudentId = student2.Id, 
+            CourseId = course.Id
+        };
 
         await context.Teachers.AddAsync(teacher);
         await context.Courses.AddAsync(course);
         await context.Students.AddAsync(student1);
         await context.Students.AddAsync(student2);
+        await context.Grades.AddAsync(grade1);
+        await context.Grades.AddAsync(grade2);
         
         await context.SaveChangesAsync();
     }
