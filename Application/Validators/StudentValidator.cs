@@ -1,11 +1,11 @@
-using Domain.Entities;
+using Application.Requests.Students;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
 
 namespace Application.Validators;
 
-public class StudentValidator : AbstractValidator<Student>
+public class StudentValidator : AbstractValidator<CreateStudentRequest>
 {
     private readonly CollegeDbContext _context;
 
@@ -21,6 +21,6 @@ public class StudentValidator : AbstractValidator<Student>
 
     private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
-        return !await _context.Students.AnyAsync(s => s.Name == name, cancellationToken);
+        return !await _context.Students.AnyAsync(c => c.Name == name, cancellationToken);
     }
 }

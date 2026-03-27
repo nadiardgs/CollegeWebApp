@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Application.Requests.Grades;
 
-public record CreateGradeRequest(decimal Value, Student Student) : IRequest<CreateGradeResponse>;
+public record CreateGradeRequest(decimal Value, int CourseId, int StudentId) : IRequest<CreateGradeResponse>;

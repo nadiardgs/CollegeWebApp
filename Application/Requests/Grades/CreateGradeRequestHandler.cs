@@ -13,7 +13,8 @@ public class CreateGradeRequestHandler(CollegeDbContext context)
         var grade = new Grade
         {
             Value = request.Value,
-            Student = request.Student
+            StudentId = request.StudentId,
+            CourseId = request.CourseId
         };
         
         context.Grades.Add(grade);

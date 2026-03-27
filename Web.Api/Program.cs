@@ -1,30 +1,34 @@
-using Application.Requests.Grades;
-using Application.Requests.Students;
 using Application.Requests.Teachers;
-using Application.Validators;
 using FluentValidation;
 using Infrastructure;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using WebApplication3;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi("v1"); 
+var applicationAssembly = typeof(CreateTeacherRequest).Assembly;
+
+builder.Services.AddValidatorsFromAssembly(applicationAssembly);
+
+builder.Services.AddMediatR(cfg => {
+    cfg.RegisterServicesFromAssembly(applicationAssembly);
+    cfg.AddOpenBehavior(typeof(Application.Behaviors.ValidationBehavior<,>));
+});
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails(); 
 
 builder.Services.AddDbContext<CollegeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddValidatorsFromAssemblyContaining<GradeValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<StudentValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TeacherValidator>();
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateGradeRequest).Assembly));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStudentRequest).Assembly));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTeacherRequest).Assembly));
-
 builder.Services.AddControllers();
+builder.Services.AddOpenApi("v1"); 
 
 var app = builder.Build();
+
+app.UseExceptionHandler(); 
 
 if (app.Environment.IsDevelopment())
 {

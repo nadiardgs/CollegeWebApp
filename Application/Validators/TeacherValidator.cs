@@ -1,11 +1,11 @@
-using Domain.Entities;
+using Application.Requests.Teachers;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Validators;
 
-public class TeacherValidator : AbstractValidator<Teacher>
+public class TeacherValidator : AbstractValidator<CreateTeacherRequest>
 {
     private readonly CollegeDbContext _context;
 

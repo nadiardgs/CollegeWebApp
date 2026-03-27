@@ -1,11 +1,11 @@
-using Domain.Entities;
+using Application.Requests.Grades;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Validators;
 
-public class GradeValidator : AbstractValidator<Grade>
+public class GradeValidator : AbstractValidator<CreateGradeRequest>
 {
     private readonly CollegeDbContext _context;
 
@@ -21,7 +21,7 @@ public class GradeValidator : AbstractValidator<Grade>
             .WithMessage("Cannot assign a grade to a student who is not enrolled in this course.");
     }
 
-    private async Task<bool> BeEnrolledInCourse(Grade grade, CancellationToken ct)
+    private async Task<bool> BeEnrolledInCourse(CreateGradeRequest grade, CancellationToken ct)
     {
         return await _context.Courses
             .AnyAsync(c => c.Id == grade.CourseId && 
