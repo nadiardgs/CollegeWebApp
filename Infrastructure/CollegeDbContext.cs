@@ -13,9 +13,14 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.UseIdentityColumns();
         
-        modelBuilder.Entity<Grade>()
-            .Property(g => g.Value)
-            .HasPrecision(5, 2);
+        modelBuilder.Entity<Grade>(entity =>
+        {
+            entity.HasIndex(g => new { g.StudentId, g.CourseId })
+                .IsUnique();
+
+            entity.Property(g => g.Value)
+                .HasPrecision(5, 2);
+        });
 
         modelBuilder.Entity<Student>()
             .HasMany(s => s.Courses)
