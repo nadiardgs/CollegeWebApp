@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace WebApplication3;
 
@@ -8,26 +10,44 @@ public class GlobalExceptionHandler : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken ct)
     {
-        if (exception is not ValidationException validationException)
-            return false; 
-
         var problemDetails = new ProblemDetails
         {
-            Status = StatusCodes.Status400BadRequest,
-            Title = "Validation Failed",
-            Detail = "One or more validation errors occurred.",
-            Instance = context.Request.Path,
-            Extensions =
-            {
-                ["errors"] = validationException.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(g => g.Key, g => g.Select(x => x.ErrorMessage).ToArray())
-            }
+            Instance = context.Request.Path
         };
 
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        switch (exception)
+        {
+            case ValidationException validationException:
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Title = "Validation Failed";
+                problemDetails.Detail = "One or more validation errors occurred.";
+                problemDetails.Extensions["errors"] = validationException.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(x => x.ErrorMessage).ToArray());
+                break;
+            case DbUpdateException dbUpdateEx when 
+                dbUpdateEx.InnerException is PostgresException { SqlState: "23505" } pgEx:
+                problemDetails.Status = StatusCodes.Status409Conflict;
+                problemDetails.Title = "Duplicate Record Found";
+                problemDetails.Detail = GetConstraintMessage(pgEx.ConstraintName);
+                break;
+            default:
+                return false;
+        }
+
+        context.Response.StatusCode = problemDetails.Status.Value;
         await context.Response.WriteAsJsonAsync(problemDetails, ct);
 
         return true;
+    }
+
+    private static string GetConstraintMessage(string? constraintName)
+    {
+        return constraintName switch
+        {
+            "IX_Grades_StudentId_CourseId" => "This student already has a grade for this course.",
+            "IX_Courses_Title_TeacherId" => "This teacher is already assigned to a course with this title.",
+            _ => "A record with these details already exists in the system."
+        };
     }
 }
