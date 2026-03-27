@@ -1,26 +1,20 @@
+using Application.Requests.Teachers;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TeachersController(CollegeDbContext context, IValidator<Teacher> validator) : ControllerBase
+public class TeachersController(CollegeDbContext context, IValidator<Teacher> validator, IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> Create(Teacher teacher)
+    public async Task<ActionResult> Create(CreateTeacherRequest request)
     {
-        var validationResult = await validator.ValidateAsync(teacher);
-
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.Errors);
-        }
-
-        context.Teachers.Add(teacher);
-        await context.SaveChangesAsync();
-        return Ok(teacher);
+        var result = await mediator.Send(request);
+        return Ok(result);
     }
 }

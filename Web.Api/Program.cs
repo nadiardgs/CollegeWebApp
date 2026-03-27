@@ -1,3 +1,4 @@
+using Application.Requests.Teachers;
 using Application.Validators;
 using FluentValidation;
 using Infrastructure;
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<CollegeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddValidatorsFromAssemblyContaining<StudentValidator>();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTeacherRequest).Assembly));
 builder.Services.AddControllers();
 
 var app = builder.Build();

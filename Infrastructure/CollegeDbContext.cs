@@ -11,6 +11,8 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
     public DbSet<Grade> Grades => Set<Grade>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.UseIdentityColumns();
+        
         modelBuilder.Entity<Grade>()
             .Property(g => g.Value)
             .HasPrecision(5, 2);
