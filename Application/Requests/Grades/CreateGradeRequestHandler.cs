@@ -28,6 +28,4 @@ public class CreateGradeRequestHandler(CollegeDbContext context)
 
         return new CreateGradeResponse(result.Id, result.Value, result.Student.Name, result.Course.Title);
     }
-
-
 }
