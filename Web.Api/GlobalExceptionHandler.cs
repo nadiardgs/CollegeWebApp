@@ -1,3 +1,4 @@
+using Application.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,15 @@ public class GlobalExceptionHandler : IExceptionHandler
                     .GroupBy(e => e.PropertyName)
                     .ToDictionary(g => g.Key, g => g.Select(x => x.ErrorMessage).ToArray());
                 break;
-            case DbUpdateException dbUpdateEx when 
-                dbUpdateEx.InnerException is PostgresException { SqlState: "23505" } pgEx:
+            case DbUpdateException { InnerException: PostgresException { SqlState: "23505" } pgEx }:
                 problemDetails.Status = StatusCodes.Status409Conflict;
                 problemDetails.Title = "Duplicate Record Found";
                 problemDetails.Detail = GetConstraintMessage(pgEx.ConstraintName);
+                break;
+            case NotFoundException notFoundException:
+                problemDetails.Status = StatusCodes.Status404NotFound;
+                problemDetails.Title = "Resource Not Found";
+                problemDetails.Detail = notFoundException.Message;
                 break;
             default:
                 return false;
