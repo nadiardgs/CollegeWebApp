@@ -23,4 +23,11 @@ public class CoursesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query);
         return Ok(result);
     }
+    
+    [HttpPost("{courseId:int}/enroll")]
+    public async Task<ActionResult<EnrollStudentInCourseResponse>> Enroll(int courseId, [FromBody] int studentId)
+    {
+        await mediator.Send(new EnrollStudentInCourseRequest(courseId, studentId));
+        return NoContent();
+    }
 }
