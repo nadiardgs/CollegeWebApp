@@ -1,7 +1,6 @@
 using Application.Requests.Teachers;
 using FluentValidation;
 using Infrastructure;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using WebApplication3;

@@ -2,6 +2,7 @@ using Application.Responses.Grades;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Requests.Grades;
 
@@ -19,8 +20,13 @@ public class CreateGradeRequestHandler(CollegeDbContext context)
         
         context.Grades.Add(grade);
         await context.SaveChangesAsync(ct);
+        
+        var result = await context.Grades
+            .Include(g => g.Student)
+            .Include(g => g.Course)
+            .FirstAsync(g => g.Id == grade.Id, ct);
 
-        return new CreateGradeResponse(grade.Value, grade.Student);
+        return new CreateGradeResponse(result.Id, result.Value, result.Student.Name, result.Course.Title);
     }
 
 
