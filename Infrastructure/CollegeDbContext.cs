@@ -25,13 +25,19 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
         modelBuilder.Entity<Student>()
             .HasMany(s => s.Courses)
             .WithMany(c => c.Students);
-        
-        modelBuilder.Entity<Course>()
-            .HasOne(c => c.Teacher)
-            .WithMany(t => t.Courses)
-            .HasForeignKey(c => c.TeacherId)
-            .OnDelete(DeleteBehavior.Restrict);
+
+
+        modelBuilder.Entity<Course>(entity =>
+        {
+            entity.HasIndex(g => new { g.Id, g.TeacherId })
+                .IsUnique();
             
+            entity.HasOne(c => c.Teacher)
+                .WithMany(t => t.Courses)
+                .HasForeignKey(c => c.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+  
         base.OnModelCreating(modelBuilder);
     }
 }
