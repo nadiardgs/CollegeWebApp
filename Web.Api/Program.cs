@@ -1,3 +1,5 @@
+using Application.Requests.Grades;
+using Application.Requests.Students;
 using Application.Requests.Teachers;
 using Application.Validators;
 using FluentValidation;
@@ -12,8 +14,14 @@ builder.Services.AddOpenApi("v1");
 builder.Services.AddDbContext<CollegeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddValidatorsFromAssemblyContaining<GradeValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<StudentValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TeacherValidator>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateGradeRequest).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateStudentRequest).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateTeacherRequest).Assembly));
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -28,7 +36,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Seeding logic...
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<CollegeDbContext>();
@@ -36,7 +43,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-app.MapControllers(); // IMPORTANT: You were missing this call!
+app.MapControllers(); 
 
 app.MapGet("/", () => Results.Redirect("/scalar/v1"));
 

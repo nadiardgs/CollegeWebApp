@@ -1,4 +1,4 @@
-using Application.Requests.Students;
+using Application.Requests.Grades;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -7,10 +7,10 @@ namespace WebApplication3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentsController(CollegeDbContext context, IMediator mediator) : ControllerBase
+public class GradesController(CollegeDbContext context, IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> Create(CreateStudentRequest request)
+    public async Task<ActionResult> Create(CreateGradeRequest request)
     {
         var result = await mediator.Send(request);
         return Ok(result);

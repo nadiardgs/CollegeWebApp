@@ -1,6 +1,4 @@
-using Application.Requests.Teachers;
 using Application.Responses.Students;
-using Application.Responses.Teachers;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -12,12 +10,12 @@ public class CreateStudentRequestHandler(CollegeDbContext context)
 {
     public async Task<CreateStudentResponse> Handle(CreateStudentRequest request, CancellationToken ct)
     {
-        var teacher = new Teacher { Name = request.Name };
+        var student = new Student() { Name = request.Name };
         
-        context.Teachers.Add(teacher);
+        context.Students.Add(student);
         await context.SaveChangesAsync(ct);
 
-        return new CreateStudentResponse(teacher.Id, teacher.Name);
+        return new CreateStudentResponse(student.Id, student.Name);
     }
 
 
