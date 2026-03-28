@@ -1,4 +1,5 @@
 using Application.Requests.Teachers;
+using Application.Responses.Teachers.DTOs;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,13 @@ public class TeachersController(CollegeDbContext context,IMediator mediator) : C
     public async Task<ActionResult> Create(CreateTeacherRequest request)
     {
         var result = await mediator.Send(request);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAllTeachers()
+    {
+        var result = await mediator.Send(new GetAllTeachersRequest());
         return Ok(result);
     }
 }

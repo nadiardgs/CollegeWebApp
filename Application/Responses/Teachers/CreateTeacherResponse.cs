@@ -1,3 +1,5 @@
+using Application.Responses.Teachers.DTOs;
+
 namespace Application.Responses.Teachers;
 
-public record CreateTeacherResponse(int Id, string Name);
+public record CreateTeacherResponse(TeacherDto TeacherDto);

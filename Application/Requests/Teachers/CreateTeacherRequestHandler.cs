@@ -1,5 +1,5 @@
-using Application.Responses;
 using Application.Responses.Teachers;
+using Application.Responses.Teachers.DTOs;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -16,6 +16,8 @@ public class CreateTeacherRequestHandler(CollegeDbContext context)
         context.Teachers.Add(teacher);
         await context.SaveChangesAsync(ct);
 
-        return new CreateTeacherResponse(teacher.Id, teacher.Name);
+        return new CreateTeacherResponse(
+            new TeacherDto(
+                teacher.Id, teacher.Name));
     }
 }
