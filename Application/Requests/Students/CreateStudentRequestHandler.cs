@@ -1,4 +1,5 @@
 using Application.Responses.Students;
+using Application.Responses.Students.DTOs;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -15,7 +16,11 @@ public class CreateStudentRequestHandler(CollegeDbContext context)
         context.Students.Add(student);
         await context.SaveChangesAsync(ct);
 
-        return new CreateStudentResponse(student.Id, student.Name);
+        return new CreateStudentResponse(
+            new StudentDto(
+                student.Id, 
+                student.Name)
+        );
     }
 
 

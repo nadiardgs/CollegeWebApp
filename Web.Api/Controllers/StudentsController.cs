@@ -1,5 +1,6 @@
 using Application.Requests.Students;
 using Application.Responses.Students;
+using Application.Responses.Students.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,14 @@ public class StudentsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<GetStudentByIdResponse>> GetById(int id)
     {
         var query = new GetStudentByIdRequest(id);
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<StudentDto>>> GetAll()
+    {
+        var query = new GetAllStudentsRequest();
         var result = await mediator.Send(query);
         return Ok(result);
     }
