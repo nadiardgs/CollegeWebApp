@@ -1,5 +1,5 @@
 using Application.Exceptions;
-using Application.Requests.Courses.DTOs;
+using Application.Responses.Courses.DTOs;
 using Application.Responses.Students;
 using Infrastructure;
 using MediatR;

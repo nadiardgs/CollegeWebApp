@@ -1,4 +1,4 @@
-using Application.Requests.Courses.DTOs;
+using Application.Responses.Courses.DTOs;
 
 namespace Application.Responses.Students;
 

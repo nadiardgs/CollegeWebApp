@@ -1,3 +1,3 @@
-namespace Application.Requests.Courses.DTOs;
+namespace Application.Responses.Courses.DTOs;
 
 public record CourseDto(int Id, string Title);
