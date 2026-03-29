@@ -1,4 +1,4 @@
-namespace Application.Responses.Grades;
+namespace Application.Responses.Grades.DTOs;
 
 public record GradeDto(
     string CourseTitle,

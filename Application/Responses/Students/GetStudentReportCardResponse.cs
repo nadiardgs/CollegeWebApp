@@ -1,4 +1,4 @@
-using Application.Responses.Grades;
+using Application.Responses.Grades.DTOs;
 
 namespace Application.Responses.Students;
 
