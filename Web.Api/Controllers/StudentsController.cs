@@ -32,4 +32,12 @@ public class StudentsController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query);
         return Ok(result);
     }
+    
+    [HttpGet("{id:int}/report-card")]
+    public async Task<ActionResult<GetStudentReportCardResponse>> GetReportCard(int id)
+    {
+        var query =  new GetStudentReportCardRequest(id);
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
 }
