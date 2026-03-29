@@ -1,5 +1,6 @@
 using Application.Requests.Courses;
 using Application.Responses.Courses;
+using Application.Responses.Courses.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,5 +30,12 @@ public class CoursesController(IMediator mediator) : ControllerBase
     {
         await mediator.Send(new EnrollStudentInCourseRequest(courseId, studentId));
         return NoContent();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
+    {
+        var result = await mediator.Send(new GetAllCoursesRequest());
+        return Ok(result);
     }
 }
