@@ -38,4 +38,11 @@ public class CoursesController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetAllCoursesRequest());
         return Ok(result);
     }
+    
+    [HttpPost("{id:int}/grades/bulk")]
+    public async Task<ActionResult> BulkGrade(int id, [FromBody] Dictionary<int, decimal> studentGrades)
+    {
+        await mediator.Send(new BulkGradeStudentsRequest(id, studentGrades));
+        return NoContent();
+    }
 }
