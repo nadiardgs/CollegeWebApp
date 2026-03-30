@@ -1,8 +1,9 @@
+using Application.Responses.Grades.DTOs;
 using MediatR;
 
 namespace Application.Requests.Courses;
 
 public record BulkGradeStudentsRequest (
     int CourseId, 
-    Dictionary<int, decimal> StudentGrades
+    IReadOnlyCollection<GradeDto> Grades
 ) : IRequest<bool>;

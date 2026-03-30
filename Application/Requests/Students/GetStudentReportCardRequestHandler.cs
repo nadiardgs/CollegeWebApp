@@ -21,6 +21,7 @@ public class GetStudentReportCardRequestHandler(CollegeDbContext context)
                 s.Courses.Select(course => new GradeDto(
                     course.Title,
                     course.Teacher.Name,
+                    s.Id,
                     context.Grades
                         .Where(g => g.StudentId == s.Id && g.CourseId == course.Id)
                         .Select(g => (decimal?)g.Value)

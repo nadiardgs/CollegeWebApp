@@ -12,33 +12,42 @@ public class BulkGradeStudentsRequestHandler(CollegeDbContext context)
     public async Task<bool> Handle(BulkGradeStudentsRequest request, CancellationToken ct)
     {
         var courseExists = await context.Courses.AnyAsync(c => c.Id == request.CourseId, ct);
-        if (!courseExists) throw new NotFoundException($"Course {request.CourseId} not found.");
+        if (!courseExists) 
+            throw new NotFoundException($"Course {request.CourseId} not found.");
 
-        var studentIds = request.StudentGrades.Keys.ToList();
+        var studentIds = request.Grades.Select(g => g.StudentId).ToList();
+
         var existingGrades = await context.Grades
             .Where(g => g.CourseId == request.CourseId && studentIds.Contains(g.StudentId))
             .ToListAsync(ct);
-
-        foreach (var (studentId, gradeValue) in request.StudentGrades)
+        
+        var validGrades = request.Grades
+            .Where(g => g.Value.HasValue)
+            .ToList();
+        
+        foreach (var gradeDto in validGrades)
         {
-            var existing = existingGrades.FirstOrDefault(g => g.StudentId == studentId);
+            var incomingValue = gradeDto.Value!.Value;
+            
+            var existing = existingGrades.FirstOrDefault(g => g.StudentId == gradeDto.StudentId);
 
             if (existing != null)
             {
-                existing.Value = gradeValue;
+                existing.Value = incomingValue;
             }
             else
             {
-                context.Grades.Add(new Grade 
-                { 
-                    CourseId = request.CourseId, 
-                    StudentId = studentId, 
-                    Value = gradeValue 
+                context.Grades.Add(new Grade
+                {
+                    CourseId = request.CourseId,
+                    StudentId = gradeDto.StudentId,
+                    Value = incomingValue
                 });
             }
         }
 
         await context.SaveChangesAsync(ct);
+        
         return true;
     }
 }

@@ -1,6 +1,7 @@
 using Application.Requests.Courses;
 using Application.Responses.Courses;
 using Application.Responses.Courses.DTOs;
+using Application.Responses.Grades.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +41,7 @@ public class CoursesController(IMediator mediator) : ControllerBase
     }
     
     [HttpPost("{id:int}/grades/bulk")]
-    public async Task<ActionResult> BulkGrade(int id, [FromBody] Dictionary<int, decimal> studentGrades)
+    public async Task<ActionResult> BulkGrade(int id, [FromBody] IReadOnlyCollection<GradeDto> studentGrades)
     {
         await mediator.Send(new BulkGradeStudentsRequest(id, studentGrades));
         return NoContent();
