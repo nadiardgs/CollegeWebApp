@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using Application.Constants;
 using Application.Requests.Students;
 using Application.Responses.Students;
 using Application.Responses.Students.DTOs;
@@ -12,21 +14,24 @@ public class StudentsControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
     private readonly StudentsController _controller;
+    private readonly CreateStudentRequest _createValidStudentRequest;
+    private readonly CreateStudentRequest _createInvalidStudentRequest;
 
     public StudentsControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
         _controller = new StudentsController(_mediatorMock.Object);
+        _createValidStudentRequest = new CreateStudentRequest("John Doe");
+        _createInvalidStudentRequest = new CreateStudentRequest("Jo");
     }
 
     [Fact]
     public async Task Create_ShouldReturnOk_WhenStudentIsCreated()
     {
         // Arrange
-        var command = new CreateStudentRequest("John Doe");
         var expectedResponse = new CreateStudentResponse(
             new StudentDto(
-                1, "John Doe")
+                1, _createValidStudentRequest.Name)
         );
 
         _mediatorMock
@@ -34,11 +39,27 @@ public class StudentsControllerTests
             .ReturnsAsync(expectedResponse);
 
         // Act
-        var result = await _controller.Create(command);
+        var result = await _controller.Create(_createValidStudentRequest);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(expectedResponse, okResult.Value);
+    }
+    
+    [Fact]
+    public async Task Create_ShouldReturnError_WhenStudentNamingRuleViolated()
+    {
+        // Arrange
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<CreateStudentRequest>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ValidationException(ValidationMessages.StudentNameMinLength));
+        
+        // Act
+        var result = await Assert.ThrowsAsync<ValidationException>(() =>
+            _controller.Create(_createInvalidStudentRequest));
+        
+        // Assert
+        Assert.Equal(ValidationMessages.StudentNameMinLength, result.Message);   
     }
 
     [Fact]

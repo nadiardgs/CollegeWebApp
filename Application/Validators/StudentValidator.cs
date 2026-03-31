@@ -1,3 +1,4 @@
+using Application.Constants;
 using Application.Requests.Students;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +16,8 @@ public class StudentValidator : AbstractValidator<CreateStudentRequest>
 
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MinimumLength(3)
-            .MustAsync(BeUniqueName).WithMessage("A student with this name already exists.");
+            .MinimumLength(3).WithMessage(ValidationMessages.StudentNameMinLength)
+            .MustAsync(BeUniqueName).WithMessage(ValidationMessages.StudentAlreadyExists);
     }
 
     private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
