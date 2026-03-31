@@ -20,9 +20,13 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory)
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         
-        var content = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        var content = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         
         Assert.NotNull(content);
-        Assert.Equal(ValidationMessages.StudentNameMinLength, content.Title);
+        
+        Assert.Equal(ValidationMessages.ValidationFailed, content.Title);
+        
+        Assert.True(content.Errors.ContainsKey("Name"));
+        Assert.Contains(ValidationMessages.StudentNameMinLength, content.Errors["Name"]);
     }
 }
