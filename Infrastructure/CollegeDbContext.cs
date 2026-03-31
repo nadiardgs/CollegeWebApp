@@ -9,10 +9,13 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
     public DbSet<Teacher> Teachers => Set<Teacher>();
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Grade> Grades => Set<Grade>();
+    public DbSet<Book> Books => Set<Book>();
+    public DbSet<Loan> Loans => Set<Loan>();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         modelBuilder.UseIdentityColumns();
-        
+
         modelBuilder.Entity<Grade>(entity =>
         {
             entity.HasIndex(g => new { g.StudentId, g.CourseId })
@@ -31,11 +34,24 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
         {
             entity.HasIndex(g => new { g.Id, g.TeacherId })
                 .IsUnique();
-            
+
             entity.HasOne(c => c.Teacher)
                 .WithMany(t => t.Courses)
                 .HasForeignKey(c => c.TeacherId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Loan>(entity =>
+        {
+            entity.HasOne(l => l.Student)
+                .WithMany(s => s.Loans)
+                .HasForeignKey(l => l.StudentId);
+
+            entity.HasOne(l => l.Book)
+                    .WithMany(b => b.Loans)
+                    .HasForeignKey(l => l.BookId);
+
+            entity.Property(l => l.BorrowedAt).IsRequired();
         });
   
         base.OnModelCreating(modelBuilder);
