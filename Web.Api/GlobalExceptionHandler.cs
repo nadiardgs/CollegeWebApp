@@ -1,9 +1,9 @@
 using Application.Exceptions;
-using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace WebApplication3;
 
