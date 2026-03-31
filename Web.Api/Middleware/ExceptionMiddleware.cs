@@ -33,6 +33,8 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         };
 
         context.Response.StatusCode = (int)statusCode;
+        
+        Console.WriteLine($"--- ERROR JSON: {exception.Message} ---");
 
         var problemDetails = new ProblemDetails
         {
@@ -45,6 +47,8 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         if (exception is ValidationException valEx)
         {
             problemDetails.Extensions.Add("errors", valEx.Errors);
+            Console.WriteLine($"--- ERROR VALIDATION: {exception.Message} ---");
+
         }
 
         var json = JsonSerializer.Serialize(problemDetails);
