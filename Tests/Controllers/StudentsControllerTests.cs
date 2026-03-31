@@ -81,7 +81,7 @@ public class StudentsControllerTests
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var actualStudents = Assert.IsAssignableFrom<IEnumerable<StudentDto>>(okResult.Value);
+        var actualStudents = Assert.IsType<IEnumerable<StudentDto>>(okResult.Value, exactMatch: false);
         Assert.Equal(2, actualStudents.Count());
     }
 }
