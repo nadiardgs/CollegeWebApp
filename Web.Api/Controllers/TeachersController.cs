@@ -8,7 +8,7 @@ namespace WebApplication3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TeachersController(CollegeDbContext context,IMediator mediator) : ControllerBase
+public class TeachersController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult> Create(CreateTeacherRequest request)
@@ -18,7 +18,7 @@ public class TeachersController(CollegeDbContext context,IMediator mediator) : C
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAllTeachers()
+    public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll()
     {
         var result = await mediator.Send(new GetAllTeachersRequest());
         return Ok(result);

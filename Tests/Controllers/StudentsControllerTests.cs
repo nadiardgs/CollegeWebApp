@@ -14,14 +14,16 @@ public class StudentsControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
     private readonly StudentsController _controller;
-    private readonly CreateStudentRequest _createValidStudentRequest;
+    private readonly CreateStudentRequest _createValidStudentRequest1;
+    private readonly CreateStudentRequest _createValidStudentRequest2;
     private readonly CreateStudentRequest _createInvalidStudentRequest;
 
     public StudentsControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
         _controller = new StudentsController(_mediatorMock.Object);
-        _createValidStudentRequest = new CreateStudentRequest("John Doe");
+        _createValidStudentRequest1 = new CreateStudentRequest("John Doe");
+        _createValidStudentRequest2 = new CreateStudentRequest("Jane Doe");
         _createInvalidStudentRequest = new CreateStudentRequest("Jo");
     }
 
@@ -31,7 +33,7 @@ public class StudentsControllerTests
         // Arrange
         var expectedResponse = new CreateStudentResponse(
             new StudentDto(
-                1, _createValidStudentRequest.Name)
+                1, _createValidStudentRequest1.Name)
         );
 
         _mediatorMock
@@ -39,7 +41,7 @@ public class StudentsControllerTests
             .ReturnsAsync(expectedResponse);
 
         // Act
-        var result = await _controller.Create(_createValidStudentRequest);
+        var result = await _controller.Create(_createValidStudentRequest1);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -68,8 +70,8 @@ public class StudentsControllerTests
         // Arrange
         var expectedStudents = new List<StudentDto>
         {
-            new(1, "John Doe"),
-            new(2, "Jane Doe")
+            new(1, _createValidStudentRequest1.Name),
+            new(2, _createValidStudentRequest2.Name)
         };
 
         _mediatorMock
