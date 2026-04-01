@@ -12,7 +12,7 @@ namespace WebApplication3.Controllers;
 public class CoursesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<CreateCourseResponse>> Create(CreateCourseRequest request)
+    public async Task<ActionResult> Create(CreateCourseRequest request)
     {
         var result = await mediator.Send(request);
         return Ok(result);
