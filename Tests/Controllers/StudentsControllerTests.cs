@@ -30,7 +30,7 @@ public class StudentsControllerTests
     public async Task Create_ShouldReturnOk_WhenStudentIsCreated()
     {
         // Arrange
-        var expectedResponse = new CreateStudentResponse(
+        var expectedResponse = new UpsertStudentResponse(
             new StudentDto(
                 1, _createValidStudentRequest1.Name)
         );

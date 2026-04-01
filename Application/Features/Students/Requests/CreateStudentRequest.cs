@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Entities.Students.Requests;
 
-public record CreateStudentRequest(string Name) : IRequest<CreateStudentResponse>;
+public record CreateStudentRequest(string Name) : IRequest<UpsertStudentResponse>;

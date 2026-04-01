@@ -7,16 +7,16 @@ using MediatR;
 namespace Application.Features.Students.Requests;
 
 public class CreateStudentRequestHandler(CollegeDbContext context)
-    : IRequestHandler<CreateStudentRequest, CreateStudentResponse>
+    : IRequestHandler<CreateStudentRequest, UpsertStudentResponse>
 {
-    public async Task<CreateStudentResponse> Handle(CreateStudentRequest request, CancellationToken ct)
+    public async Task<UpsertStudentResponse> Handle(CreateStudentRequest request, CancellationToken ct)
     {
         var student = new Student() { Name = request.Name };
         
         context.Students.Add(student);
         await context.SaveChangesAsync(ct);
 
-        return new CreateStudentResponse(
+        return new UpsertStudentResponse(
             new StudentDto(
                 student.Id, 
                 student.Name)

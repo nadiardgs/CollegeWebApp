@@ -1,4 +1,5 @@
 using Application.Entities.Students.Requests;
+using Application.Features.Students.Requests;
 using Application.Features.Students.Responses;
 using Application.Features.Students.Responses;
 using MediatR;
@@ -13,6 +14,14 @@ public class StudentsController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Create(CreateStudentRequest request)
     {
+        var result = await mediator.Send(request);
+        return Ok(result);
+    }
+    
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateStudentRequest request)
+    {
+        request.Id = id;
         var result = await mediator.Send(request);
         return Ok(result);
     }
