@@ -1,4 +1,4 @@
-using Application.Requests.Grades;
+using Application.Features.Grades.Requests;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;

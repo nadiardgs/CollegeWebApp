@@ -1,6 +1,6 @@
-using Application.Requests.Students;
-using Application.Responses.Students;
-using Application.Responses.Students.DTOs;
+using Application.Entities.Students.Requests;
+using Application.Features.Students.Responses;
+using Application.Features.Students.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

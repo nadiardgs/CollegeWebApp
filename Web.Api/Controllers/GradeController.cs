@@ -1,4 +1,4 @@
-using Application.Requests.Grades;
+using Application.Features.Grades.Requests;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

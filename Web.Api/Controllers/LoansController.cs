@@ -1,4 +1,4 @@
-using Application.Requests.Loans;
+using Application.Features.Loans.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

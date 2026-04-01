@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Application.Constants;
-using Application.Requests.Teachers;
-using Application.Responses.Teachers;
-using Application.Responses.Teachers.DTOs;
+using Application.Features.Teachers.Requests;
+using Application.Features.Teachers.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

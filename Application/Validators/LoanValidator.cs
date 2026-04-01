@@ -1,5 +1,5 @@
 using Application.Constants;
-using Application.Requests.Loans;
+using Application.Features.Loans.Requests;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;

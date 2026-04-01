@@ -1,6 +1,5 @@
-using Application.Requests.Teachers;
-using Application.Responses.Teachers.DTOs;
-using Infrastructure;
+using Application.Features.Teachers.Requests;
+using Application.Features.Teachers.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

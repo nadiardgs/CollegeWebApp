@@ -1,4 +1,4 @@
-using Application.Requests.Teachers;
+using Application.Features.Teachers.Requests;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;

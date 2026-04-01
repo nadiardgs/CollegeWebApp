@@ -1,6 +1,6 @@
 using Application.Constants;
-using Application.Requests.Students;
-using Application.Responses.Students.DTOs;
+using Application.Entities.Students.Requests;
+using Application.Features.Students.Responses;
 using Application.Validators;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
