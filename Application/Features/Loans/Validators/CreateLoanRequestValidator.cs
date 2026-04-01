@@ -4,7 +4,7 @@ using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Validators;
+namespace Application.Features.Loans.Validators;
 
 public class CreateLoanRequestValidator : AbstractValidator<CreateLoanRequest>
 {

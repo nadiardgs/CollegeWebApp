@@ -1,16 +1,16 @@
 using Application.Constants;
 using Application.Entities.Students.Requests;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
-namespace Application.Validators;
+namespace Application.Features.Students.Validators;
 
-public class StudentValidator : AbstractValidator<CreateStudentRequest>
+public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequest>
 {
     private readonly CollegeDbContext _context;
 
-    public StudentValidator(CollegeDbContext context)
+    public CreateStudentRequestValidator(CollegeDbContext context)
     {
         _context = context;
 

@@ -1,18 +1,18 @@
 using Application.Constants;
 using Application.Entities.Students.Requests;
 using Application.Features.Students.Responses;
-using Application.Validators;
+using Application.Features.Students.Validators;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Validators;
 
-public class StudentValidatorTests
+public class CreateStudentRequestValidatorTests
 {
-    private readonly StudentValidator _studentValidator;
+    private readonly CreateStudentRequestValidator _createStudentRequestValidator;
     private readonly StudentDto _validStudent;
 
-    public StudentValidatorTests()
+    public CreateStudentRequestValidatorTests()
     {
         _validStudent = new StudentDto(1, "John Doe");
 
@@ -22,7 +22,7 @@ public class StudentValidatorTests
 
         var context = new CollegeDbContext(options);
         
-        _studentValidator = new StudentValidator(context);
+        _createStudentRequestValidator = new CreateStudentRequestValidator(context);
     }
     
     [Theory]
@@ -34,7 +34,7 @@ public class StudentValidatorTests
         var request = new CreateStudentRequest(shortName);
 
         // Act
-        var result = await _studentValidator.ValidateAsync(request);
+        var result = await _createStudentRequestValidator.ValidateAsync(request);
 
         // Assert
         Assert.False(result.IsValid);
@@ -48,7 +48,7 @@ public class StudentValidatorTests
         var request = new CreateStudentRequest(_validStudent.Name);
 
         // Act
-        var result = await _studentValidator.ValidateAsync(request);
+        var result = await _createStudentRequestValidator.ValidateAsync(request);
 
         // Assert
         Assert.True(result.IsValid);

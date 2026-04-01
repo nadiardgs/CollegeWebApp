@@ -4,11 +4,11 @@ using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Validators;
+namespace Application.Features.Courses.Validators;
 
-public class CourseValidator : AbstractValidator<EnrollStudentInCourseRequest>
+public class EnrollStudentInCourseRequestValidator : AbstractValidator<EnrollStudentInCourseRequest>
 {
-    public CourseValidator(CollegeDbContext context)
+    public EnrollStudentInCourseRequestValidator(CollegeDbContext context)
     {
         RuleFor(request => request.CourseId)
             .MustAsync(async (id, ct) => await context.Courses.AnyAsync(c => c.Id == id, ct))

@@ -3,13 +3,13 @@ using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Validators;
+namespace Application.Features.Grades.Validators;
 
-public class GradeValidator : AbstractValidator<CreateGradeRequest>
+public class CreateGradeRequestValidator : AbstractValidator<CreateGradeRequest>
 {
     private readonly CollegeDbContext _context;
 
-    public GradeValidator(CollegeDbContext context)
+    public CreateGradeRequestValidator(CollegeDbContext context)
     {
         _context = context;
 
