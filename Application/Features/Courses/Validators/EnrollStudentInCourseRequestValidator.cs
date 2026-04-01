@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Validators;
 
-public class EnrollStudentInCourseRequestValidator : AbstractValidator<EnrollStudentInCourseRequest>
+public class CourseRequestValidator : AbstractValidator<EnrollStudentInCourseRequest>
 {
-    public EnrollStudentInCourseRequestValidator(CollegeDbContext context)
+    public CourseRequestValidator(CollegeDbContext context)
     {
         RuleFor(request => request.CourseId)
             .MustAsync(async (id, ct) => await context.Courses.AnyAsync(c => c.Id == id, ct))

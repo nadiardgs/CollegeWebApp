@@ -25,10 +25,17 @@ public class CoursesController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
-    [HttpPost("{courseId:int}/enroll")]
-    public async Task<ActionResult<EnrollStudentInCourseResponse>> Enroll(int courseId, [FromBody] int studentId)
+    [HttpPost("{courseId:int}/students/enroll")]
+    public async Task<ActionResult<EnrollStudentInCourseResponse>> EnrollStudent(int courseId, [FromBody] int studentId)
     {
         await mediator.Send(new EnrollStudentInCourseRequest(courseId, studentId));
+        return NoContent();
+    }
+    
+    [HttpPost("{courseId:int}/teachers/enroll")]
+    public async Task<ActionResult<EnrollTeacherInCourseResponse>> EnrollTeacher(int courseId, [FromBody] int studentId)
+    {
+        await mediator.Send(new EnrollTeacherInCourseRequest(courseId, studentId));
         return NoContent();
     }
 

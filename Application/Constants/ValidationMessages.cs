@@ -11,4 +11,5 @@ public static class ValidationMessages
     public const string StudentNotFound = "Student does not exist.";
     public const string BookNotFound = "Book does not exist.";
     public const string CourseNotFound = "Course does not exist.";
+    public const string TeacherNotFound = "Teacher does not exist.";
 }

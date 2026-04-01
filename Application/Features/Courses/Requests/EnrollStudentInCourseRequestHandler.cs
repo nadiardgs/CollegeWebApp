@@ -1,5 +1,6 @@
+using Application.Constants;
+using Application.Exceptions;
 using Application.Features.Courses.Responses;
-using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,17 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
 {
     public async Task<EnrollStudentInCourseResponse> Handle(EnrollStudentInCourseRequest request, CancellationToken cancellationToken)
     {
-        var alreadyEnrolled = await context.Courses
-            .AnyAsync(c => c.Id == request.CourseId && 
-                           c.Students.Any(s => s.Id == request.StudentId), cancellationToken);
+        var course = await context.Courses
+                         .Include(c => c.Students) 
+                         .FirstOrDefaultAsync(c => c.Id == request.CourseId, cancellationToken)
+                     ?? throw new NotFoundException(ValidationMessages.CourseNotFound);
 
-        if (alreadyEnrolled) return new EnrollStudentInCourseResponse(true);
+        var student = await context.Students.FindAsync([request.StudentId], cancellationToken)
+                      ?? throw new NotFoundException(ValidationMessages.StudentNotFound);
+
+        if (course.Students.Any(s => s.Id == request.StudentId)) return new EnrollStudentInCourseResponse(true);
         
-        var student = new Student { Id = request.StudentId };
-        context.Students.Attach(student); 
-
-        var course = await context.Courses.Include(c => c.Students).FirstAsync(c => c.Id == request.CourseId, cancellationToken);
         course.Students.Add(student);
-
         await context.SaveChangesAsync(cancellationToken);
 
         return new EnrollStudentInCourseResponse(true);
