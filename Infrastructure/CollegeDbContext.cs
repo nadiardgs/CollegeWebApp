@@ -25,10 +25,13 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
                 .HasPrecision(5, 2);
         });
 
-        modelBuilder.Entity<Student>()
-            .HasMany(s => s.Courses)
-            .WithMany(c => c.Students);
-
+        modelBuilder.Entity<Student>(entity =>
+        {
+            entity.HasIndex(s => s.Name)
+                .IsUnique();
+            entity.HasMany(s => s.Courses)
+                .WithMany(c => c.Students);
+        });
 
         modelBuilder.Entity<Course>(entity =>
         {

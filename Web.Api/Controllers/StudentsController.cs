@@ -1,7 +1,6 @@
 using Application.Entities.Students.Requests;
 using Application.Features.Students.Requests;
 using Application.Features.Students.Responses;
-using Application.Features.Students.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

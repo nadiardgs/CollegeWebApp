@@ -2,6 +2,7 @@ using Application.Constants;
 using Application.Entities.Students.Requests;
 using Application.Features.Students.Responses;
 using Application.Features.Students.Validators;
+using Domain.Entities;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ public class CreateStudentRequestValidatorTests
 {
     private readonly CreateStudentRequestValidator _createStudentRequestValidator;
     private readonly StudentDto _validStudent;
+    private readonly CollegeDbContext _context;
 
     public CreateStudentRequestValidatorTests()
     {
@@ -20,9 +22,9 @@ public class CreateStudentRequestValidatorTests
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
-        var context = new CollegeDbContext(options);
+        _context = new CollegeDbContext(options);
         
-        _createStudentRequestValidator = new CreateStudentRequestValidator(context);
+        _createStudentRequestValidator = new CreateStudentRequestValidator(_context);
     }
     
     [Theory]
@@ -52,5 +54,22 @@ public class CreateStudentRequestValidatorTests
 
         // Assert
         Assert.True(result.IsValid);
+    }
+    
+    [Fact]
+    public async Task Validator_ShouldBeInvalid_WhenNameIsNotUnique()
+    {
+        var existingStudent = new Student { Name = _validStudent.Name };
+        _context.Students.Add(existingStudent);
+        await _context.SaveChangesAsync();
+
+        var request = new CreateStudentRequest(_validStudent.Name);
+
+        // Act
+        var result = await _createStudentRequestValidator.ValidateAsync(request);
+
+        // Assert
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.ErrorMessage == ValidationMessages.StudentAlreadyExists);
     }
 }
