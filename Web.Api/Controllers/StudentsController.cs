@@ -14,7 +14,10 @@ public class StudentsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult> Create(CreateStudentRequest request)
     {
         var result = await mediator.Send(request);
-        return Ok(result);
+        return CreatedAtAction(
+            nameof(GetById), 
+            new { id = result.Student.Id }, 
+            result);
     }
     
     [HttpPatch("{id:int}")]

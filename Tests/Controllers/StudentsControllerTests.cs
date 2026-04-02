@@ -43,7 +43,7 @@ public class StudentsControllerTests
         var result = await _controller.Create(_createValidStudentRequest1);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<CreatedAtActionResult>(result);
         Assert.Equal(expectedResponse, okResult.Value);
     }
     
@@ -61,6 +61,22 @@ public class StudentsControllerTests
         
         // Assert
         Assert.Equal(ValidationMessages.StudentNameMinLength, result.Message);   
+    }
+    
+    [Fact]
+    public async Task Create_ShouldReturnError_WhenStudentNameIsNotUnique()
+    {
+        // Arrange
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<CreateStudentRequest>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ValidationException(ValidationMessages.StudentAlreadyExists));
+        
+        // Act
+        var result = await Assert.ThrowsAsync<ValidationException>(() =>
+            _controller.Create(_createValidStudentRequest1));
+        
+        // Assert
+        Assert.Equal(ValidationMessages.StudentAlreadyExists, result.Message);   
     }
 
     [Fact]
@@ -83,6 +99,6 @@ public class StudentsControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var actualStudents = Assert.IsType<IEnumerable<StudentDto>>(okResult.Value, exactMatch: false);
-        Assert.Equal(2, actualStudents.Count());
+        Assert.Equal(expectedStudents.Count, actualStudents.Count());
     }
 }

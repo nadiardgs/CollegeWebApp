@@ -7,7 +7,7 @@ namespace WebApplication3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GradesController(CollegeDbContext context, IMediator mediator) : ControllerBase
+public class GradesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult> Create(CreateGradeRequest request)
