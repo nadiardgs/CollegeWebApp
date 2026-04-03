@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApplication3.Controllers;
 
-namespace Tests.Controllers;
+namespace UnitTests.Controllers;
 
 public class TeachersControllerTests
 {
