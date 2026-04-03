@@ -19,6 +19,14 @@ public class TeachersController(IMediator mediator) : ControllerBase
             result);
     }
 
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateTeacherRequest request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return Ok(result);
+    }
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll()
     {
