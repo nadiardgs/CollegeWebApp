@@ -17,12 +17,20 @@ builder.Services.AddMediatR(cfg => {
     cfg.AddOpenBehavior(typeof(Application.Behaviors.ValidationBehavior<,>));
 });
 
+builder.Services.AddDbContext<CollegeDbContext>(options =>
+{
+    if (builder.Environment.IsEnvironment("Testing"))
+    {
+        options.UseInMemoryDatabase("TestingDb");
+    }
+    else
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    }
+});
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails(); 
-
-builder.Services.AddDbContext<CollegeDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddControllers();
 builder.Services.AddOpenApi("v1"); 
 
@@ -42,13 +50,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
+    app.UseHttpsRedirection();
+    using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<CollegeDbContext>();
     await DbSeeder.SeedAsync(context);
 }
 
-app.UseHttpsRedirection();
 app.MapControllers(); 
 
 app.MapGet("/", () => Results.Redirect("/scalar/v1"));
