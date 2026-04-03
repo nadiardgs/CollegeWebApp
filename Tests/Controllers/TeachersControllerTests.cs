@@ -43,7 +43,7 @@ public class TeachersControllerTests
         var result = await _controller.Create(_createValidTeacherRequest1);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<CreatedAtActionResult>(result);
         Assert.Equal(expectedResponse, okResult.Value);
     }
     

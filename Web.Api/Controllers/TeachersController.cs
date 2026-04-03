@@ -13,13 +13,25 @@ public class TeachersController(IMediator mediator) : ControllerBase
     public async Task<ActionResult> Create(CreateTeacherRequest request)
     {
         var result = await mediator.Send(request);
-        return Ok(result);
+        return CreatedAtAction(
+            nameof(GetById), 
+            new { id = result.TeacherDto.Id }, 
+            result);
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll()
     {
-        var result = await mediator.Send(new GetAllTeachersRequest());
+        var query = new GetAllTeachersRequest();
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
+    
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<IEnumerable<TeacherDto>>> GetById(int id)
+    {
+        var query = new GetTeacherByIdRequest(id);
+        var result = await mediator.Send(query);
         return Ok(result);
     }
 }
