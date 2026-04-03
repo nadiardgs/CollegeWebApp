@@ -21,18 +21,26 @@ public class StudentIntegrationTests : IClassFixture<CustomWebApplicationFactory
     [Fact]
     public async Task Post_Student_ReturnsCreatedStatus()
     {
-        var command = new CreateStudentRequest("John Doe " + Guid.NewGuid());
+        // Arrange
+        var command = new CreateStudentRequest("John Doe");
+        
+        // Act
         var response = await _client.PostAsJsonAsync("/api/students", command);
 
+        // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 
     [Fact]
     public async Task CreateStudent_ShouldReturn400_WhenNameIsTooShort()
     {
+        // Act
         var command = new CreateStudentRequest("Ab");
+        
+        // Arrange
         var response = await _client.PostAsJsonAsync("/api/students", command);
 
+        // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }
