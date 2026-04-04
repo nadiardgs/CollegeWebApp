@@ -1,6 +1,6 @@
-using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Courses.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 
@@ -11,7 +11,7 @@ public class EnrollTeacherInCourseRequestHandler(CollegeDbContext context) : IRe
     public async Task<EnrollTeacherInCourseResponse> Handle(EnrollTeacherInCourseRequest request, CancellationToken cancellationToken)
     {
         var course = await context.Courses.FindAsync([request.CourseId], cancellationToken)
-                     ?? throw new NotFoundException(ValidationMessages.CourseNotFound);
+                     ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
         if (course.TeacherId == request.TeacherId) 
             return new EnrollTeacherInCourseResponse(true);

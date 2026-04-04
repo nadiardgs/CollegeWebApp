@@ -1,7 +1,7 @@
-using Application.Features.Courses.Responses;
-using Application.Entities.Students.Requests;
 using Application.Exceptions;
+using Application.Features.Courses.Responses;
 using Application.Features.Students.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +26,6 @@ public class GetStudentByIdRequestHandler (CollegeDbContext context)
                     .ToList()))
             .FirstOrDefaultAsync(cancellationToken);
         
-        return result ?? throw new NotFoundException($"Student with ID {request.Id} not found.");
+        return result ?? throw new EntityNotFoundException(nameof(Student), request.Id);
     }
 }

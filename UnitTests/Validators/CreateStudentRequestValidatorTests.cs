@@ -40,7 +40,7 @@ public class CreateStudentRequestValidatorTests
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ValidationMessages.StudentNameMinLength);
+        Assert.Contains(result.Errors, e => e.ErrorMessage == ErrorMessages.MinLength(nameof(Student)));
     }
 
     [Fact]
@@ -70,6 +70,6 @@ public class CreateStudentRequestValidatorTests
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ValidationMessages.StudentAlreadyExists);
+        Assert.Contains(result.Errors, e => e.ErrorMessage == ErrorMessages.UniqueName(nameof(Student), existingStudent.Name));
     }
 }

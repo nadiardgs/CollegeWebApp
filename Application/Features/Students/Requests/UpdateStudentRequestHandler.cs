@@ -1,6 +1,7 @@
 using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Students.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ public class UpdateStudentRequestHandler(CollegeDbContext context) : IRequestHan
         var student =
             await context.Students.FirstOrDefaultAsync(s => s.Id == request.Id,
                 cancellationToken: cancellationToken)
-            ?? throw new NotFoundException(ValidationMessages.StudentNotFound);
+            ?? throw new EntityNotFoundException(nameof(Student), request.Id);
 
         if (!student.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
         {

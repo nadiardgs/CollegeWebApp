@@ -1,12 +1,14 @@
-using System.ComponentModel.DataAnnotations;
 using Application.Constants;
 using Application.Entities.Students.Requests;
+using Application.Exceptions;
 using Application.Features.Students.Requests;
 using Application.Features.Students.Responses;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApplication3.Controllers;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace UnitTests.Controllers;
 
@@ -54,14 +56,14 @@ public class StudentsControllerTests
         // Arrange
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateStudentRequest>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new ValidationException(ValidationMessages.StudentNameMinLength));
+            .ThrowsAsync(new MinLengthException(nameof(Student)));
         
         // Act
         var result = await Assert.ThrowsAsync<ValidationException>(() =>
             _controller.Create(_createInvalidStudentRequest));
         
         // Assert
-        Assert.Equal(ValidationMessages.StudentNameMinLength, result.Message);   
+        Assert.Equal(ErrorMessages.MinLength(nameof(Student)), result.Message);   
     }
     
     [Fact]
@@ -70,14 +72,14 @@ public class StudentsControllerTests
         // Arrange
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateStudentRequest>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new ValidationException(ValidationMessages.StudentAlreadyExists));
+            .ThrowsAsync(new UniqueNameException(nameof(Student), It.IsAny<string>()));
         
         // Act
         var result = await Assert.ThrowsAsync<ValidationException>(() =>
             _controller.Create(_createValidStudentRequest1));
         
         // Assert
-        Assert.Equal(ValidationMessages.StudentAlreadyExists, result.Message);   
+        Assert.Equal(ErrorMessages.UniqueName(nameof(Student), It.IsAny<string>()), result.Message);   
     }
 
     [Fact]

@@ -1,7 +1,7 @@
 using Application.Features.Grades.Responses;
-using Application.Entities.Students.Requests;
 using Application.Exceptions;
 using Application.Features.Students.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +31,6 @@ public class GetStudentReportCardRequestHandler(CollegeDbContext context)
             ))
             .FirstOrDefaultAsync(ct);
 
-        return reportCard ?? throw new NotFoundException($"Student {request.StudentId} not found.");
+        return reportCard ?? throw new EntityNotFoundException(nameof(Student), request.StudentId);
     }
 }

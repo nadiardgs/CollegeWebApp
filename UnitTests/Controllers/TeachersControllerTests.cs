@@ -1,11 +1,13 @@
-using System.ComponentModel.DataAnnotations;
 using Application.Constants;
+using Application.Exceptions;
 using Application.Features.Teachers.Requests;
 using Application.Features.Teachers.Responses;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApplication3.Controllers;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace UnitTests.Controllers;
 
@@ -53,14 +55,14 @@ public class TeachersControllerTests
         // Arrange
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateTeacherRequest>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new ValidationException(ValidationMessages.TeacherNameMinLength));
+            .ThrowsAsync(new MinLengthException(nameof(Teacher)));
         
         // Act
         var result = await Assert.ThrowsAsync<ValidationException>(() =>
             _controller.Create(_createInvalidTeacherRequest));
         
         // Assert
-        Assert.Equal(ValidationMessages.TeacherNameMinLength, result.Message);   
+        Assert.Equal(ErrorMessages.MinLength(nameof(Teacher)), result.Message);   
     }
     
     [Fact]

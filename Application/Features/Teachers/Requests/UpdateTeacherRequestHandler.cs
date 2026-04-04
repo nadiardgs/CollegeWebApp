@@ -1,6 +1,6 @@
-using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Teachers.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ public class UpdateTeacherRequestHandler(CollegeDbContext context) : IRequestHan
         var teacher =
             await context.Teachers.FirstOrDefaultAsync(s => s.Id == request.Id,
                 cancellationToken: cancellationToken)
-            ?? throw new NotFoundException(ValidationMessages.TeacherNotFound);
+            ?? throw new EntityNotFoundException(nameof(Teacher), request.Id);
 
         if (!teacher.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
         {

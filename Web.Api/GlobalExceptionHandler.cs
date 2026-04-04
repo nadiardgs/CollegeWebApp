@@ -31,7 +31,7 @@ public class GlobalExceptionHandler : IExceptionHandler
                 problemDetails.Title = "Duplicate Record Found";
                 problemDetails.Detail = GetConstraintMessage(pgEx.ConstraintName);
                 break;
-            case NotFoundException notFoundException:
+            case EntityNotFoundException notFoundException:
                 problemDetails.Status = StatusCodes.Status404NotFound;
                 problemDetails.Title = "Resource Not Found";
                 problemDetails.Detail = notFoundException.Message;

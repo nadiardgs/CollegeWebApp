@@ -1,5 +1,6 @@
 using Application.Features.Courses.Responses;
 using Application.Exceptions;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,6 @@ public class GetStudentsByCourseIdRequestHandler(CollegeDbContext context)
             )).AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
 
-        return result ?? throw new NotFoundException($"Course with ID {request.CourseId} not found.");
+        return result ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
     }
 }

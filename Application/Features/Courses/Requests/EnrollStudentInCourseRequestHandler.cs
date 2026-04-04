@@ -1,6 +1,6 @@
-using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Courses.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +14,10 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
         var course = await context.Courses
                          .Include(c => c.Students) 
                          .FirstOrDefaultAsync(c => c.Id == request.CourseId, cancellationToken)
-                     ?? throw new NotFoundException(ValidationMessages.CourseNotFound);
+                     ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
         var student = await context.Students.FindAsync([request.StudentId], cancellationToken)
-                      ?? throw new NotFoundException(ValidationMessages.StudentNotFound);
+                      ?? throw new EntityNotFoundException(nameof(Student), request.StudentId);
 
         if (course.Students.Any(s => s.Id == request.StudentId)) return new EnrollStudentInCourseResponse(true);
         

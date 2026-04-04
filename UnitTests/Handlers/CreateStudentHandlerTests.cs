@@ -9,6 +9,7 @@ public class CreateStudentHandlerTests
     private readonly CollegeDbContext _context;
     private readonly CreateStudentRequestHandler _handler;
     private readonly CreateStudentRequest _validStudentRequest;
+    private readonly CreateStudentRequest _invalidStudentRequest;
 
     public CreateStudentHandlerTests()
     {
@@ -20,6 +21,7 @@ public class CreateStudentHandlerTests
         _handler = new CreateStudentRequestHandler(_context);
         
         _validStudentRequest = new CreateStudentRequest("Alice Smith");
+        _invalidStudentRequest = new CreateStudentRequest("Al");
     }
 
     [Fact]

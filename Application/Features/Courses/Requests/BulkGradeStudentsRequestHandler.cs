@@ -13,7 +13,7 @@ public class BulkGradeStudentsRequestHandler(CollegeDbContext context)
     {
         var courseExists = await context.Courses.AnyAsync(c => c.Id == request.CourseId, ct);
         if (!courseExists) 
-            throw new NotFoundException($"Course {request.CourseId} not found.");
+            throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
         var studentIds = request.Grades.Select(g => g.StudentId).ToList();
 

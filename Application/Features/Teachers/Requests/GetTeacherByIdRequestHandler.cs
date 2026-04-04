@@ -1,7 +1,5 @@
 using Application.Constants;
 using Application.Exceptions;
-using Application.Features.Courses.Responses;
-using Application.Features.Students.Responses;
 using Application.Features.Teachers.Responses;
 using Domain.Entities;
 using Infrastructure;
@@ -22,6 +20,6 @@ public class GetTeacherByIdRequestHandler(CollegeDbContext context) : IRequestHa
                 s.Name))
             .FirstOrDefaultAsync(cancellationToken);
         
-        return result ?? throw new NotFoundException(ValidationMessages.TeacherNotFound);
+        return result ?? throw new EntityNotFoundException(nameof(Teacher), request.Id);
     }
 }

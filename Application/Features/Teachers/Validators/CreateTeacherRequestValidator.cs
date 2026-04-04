@@ -1,5 +1,6 @@
 using Application.Constants;
 using Application.Features.Teachers.Requests;
+using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ public class CreateTeacherRequestValidator : AbstractValidator<CreateTeacherRequ
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
-            .MustAsync(BeUniqueName).WithMessage(ValidationMessages.TeacherUniqueName);
+            .MustAsync(BeUniqueName).WithMessage(request => ErrorMessages.UniqueName(nameof(Teacher), request.Name));
     }
 
     private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)

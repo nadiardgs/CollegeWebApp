@@ -1,6 +1,7 @@
 using Application.Entities.Students.Requests;
 using Application.Exceptions;
 using Application.Features.Students.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,6 @@ public class GetAllStudentsRequestHandler(CollegeDbContext context) : IRequestHa
             .Select(s => new StudentDto(s.Id, s.Name))
             .ToListAsync(cancellationToken: cancellationToken);
         
-        return result ?? throw new NotFoundException($"No student was found.");
+        return result ?? throw new CollectionNotFoundException(nameof(Student));
     }
 }

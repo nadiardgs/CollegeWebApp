@@ -1,10 +1,12 @@
 using Application.Exceptions;
+using Application.Requests.Books;
 using Application.Responses.Books.DTOs;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Requests.Books;
+namespace Application.Features.Books.Requests;
 
 public class GetAllBooksRequestHandler(CollegeDbContext context) : IRequestHandler<GetAllBooksRequest, IEnumerable<BookDto>>
 {
@@ -15,6 +17,6 @@ public class GetAllBooksRequestHandler(CollegeDbContext context) : IRequestHandl
             .Select(b => new BookDto(b.Id, b.Title))
             .ToListAsync(cancellationToken: cancellationToken);
         
-        return result ?? throw new NotFoundException($"No book was found.");
+        return result ?? throw new CollectionNotFoundException(nameof(Book));
     }
 }

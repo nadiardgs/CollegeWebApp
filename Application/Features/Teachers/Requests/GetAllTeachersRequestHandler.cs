@@ -1,5 +1,6 @@
 using Application.Exceptions;
 using Application.Features.Teachers.Responses;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,6 @@ public class GetAllTeachersRequestHandler(CollegeDbContext context) : IRequestHa
             .Select(s => new TeacherDto(s.Id, s.Name))
             .ToListAsync(cancellationToken: cancellationToken);
         
-        return result ?? throw new NotFoundException($"No teacher was found.");
+        return result ?? throw new CollectionNotFoundException(nameof(Teacher));
     }
 }

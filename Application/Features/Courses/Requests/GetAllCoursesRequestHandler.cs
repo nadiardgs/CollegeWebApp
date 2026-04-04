@@ -1,5 +1,6 @@
 using Application.Features.Courses.Responses;
 using Application.Exceptions;
+using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,6 @@ public class GetAllCoursesRequestHandler(CollegeDbContext context) : IRequestHan
                 c.Title))
             .ToListAsync(cancellationToken);
         
-        return result ?? throw new NotFoundException($"No course was found.");
+        return result ?? throw new CollectionNotFoundException(nameof(Course));
     }
 }
