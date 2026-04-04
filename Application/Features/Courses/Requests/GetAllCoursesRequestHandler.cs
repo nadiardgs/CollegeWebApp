@@ -1,3 +1,4 @@
+using Application.Constants;
 using Application.Features.Courses.Responses;
 using Application.Exceptions;
 using Domain.Entities;

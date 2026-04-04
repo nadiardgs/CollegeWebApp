@@ -1,4 +1,7 @@
+using Application.Constants;
+using Application.Exceptions;
 using Application.Features.Students.Requests;
+using Domain.Entities;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,5 +40,19 @@ public class CreateStudentHandlerTests
         var studentInDb = await _context.Students.FindAsync(result.Student.Id);
         Assert.NotNull(studentInDb);
         Assert.Equal(_validStudentRequest.Name, studentInDb.Name);
+    }
+    
+    [Fact]
+    public async Task Handle_ShouldThrowConflictException_WhenNameExists()
+    {
+        // Arrange
+        await _context.Students.AddAsync(new Student { Name = _validStudentRequest.Name});
+        await _context.SaveChangesAsync();
+    
+        var request = new CreateStudentRequest(_validStudentRequest.Name);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<UniqueNameException>(() => 
+            _handler.Handle(request, CancellationToken.None));
     }
 }

@@ -15,8 +15,6 @@ public class CourseRequestValidator : AbstractValidator<EnrollStudentInCourseReq
             .MustAsync(async (id, ct) => await context.Courses.AnyAsync(c => c.Id == id, ct))
             .WithMessage(request => ErrorMessages.EntityNotFound(nameof(Course), request.CourseId));
         
-        
-        
         RuleFor(request => request.StudentId)
             .MustAsync(async (id, ct) => await context.Students.AnyAsync(s => s.Id == id, ct))
             .WithMessage(request => ErrorMessages.EntityNotFound(nameof(Student), request.StudentId));

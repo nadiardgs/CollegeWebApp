@@ -59,7 +59,7 @@ public class StudentsControllerTests
             .ThrowsAsync(new MinLengthException(nameof(Student)));
         
         // Act
-        var result = await Assert.ThrowsAsync<ValidationException>(() =>
+        var result = await Assert.ThrowsAsync<MinLengthException>(() =>
             _controller.Create(_createInvalidStudentRequest));
         
         // Assert
@@ -75,7 +75,7 @@ public class StudentsControllerTests
             .ThrowsAsync(new UniqueNameException(nameof(Student), It.IsAny<string>()));
         
         // Act
-        var result = await Assert.ThrowsAsync<ValidationException>(() =>
+        var result = await Assert.ThrowsAsync<UniqueNameException>(() =>
             _controller.Create(_createValidStudentRequest1));
         
         // Assert
