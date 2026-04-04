@@ -6,7 +6,7 @@ using Domain.Entities;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace UnitTests.Handlers;
+namespace UnitTests.Features.Students.Handlers;
 
 public class GetStudentByIdHandlerTests
 {

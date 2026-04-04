@@ -6,7 +6,7 @@ using Domain.Entities;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace UnitTests.Validators;
+namespace UnitTests.Features.Students.Validators;
 
 public class CreateStudentRequestValidatorTests
 {

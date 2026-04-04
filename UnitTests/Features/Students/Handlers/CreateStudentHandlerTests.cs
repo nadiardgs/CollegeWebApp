@@ -2,7 +2,7 @@ using Application.Features.Students.Requests;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace UnitTests.Handlers;
+namespace UnitTests.Features.Students.Handlers;
 
 public class CreateStudentHandlerTests
 {

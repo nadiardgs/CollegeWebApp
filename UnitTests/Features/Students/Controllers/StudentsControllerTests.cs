@@ -10,7 +10,7 @@ using Moq;
 using WebApplication3.Controllers;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
-namespace UnitTests.Controllers;
+namespace UnitTests.Features.Students.Controllers;
 
 public class StudentsControllerTests
 {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApplication3.Controllers;
 
-namespace UnitTests.Controllers;
+namespace UnitTests.Features.Courses.Controllers;
 
 public class CoursesControllerTests
 {
