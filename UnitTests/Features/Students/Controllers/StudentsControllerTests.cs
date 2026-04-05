@@ -8,7 +8,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApplication3.Controllers;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace UnitTests.Features.Students.Controllers;
 

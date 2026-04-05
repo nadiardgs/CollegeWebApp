@@ -1,5 +1,4 @@
 using Application.Constants;
-using Application.Entities.Students.Requests;
 using Application.Features.Students.Requests;
 using Domain.Entities;
 using FluentValidation;
@@ -18,7 +17,8 @@ public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequ
 
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MinimumLength(3).WithMessage(ErrorMessages.MinLength(nameof(Student)))
+            .MinimumLength(3)
+            .WithMessage(ErrorMessages.MinLength(nameof(Student)))
             .MustAsync(BeUniqueName).WithMessage(request => ErrorMessages.UniqueName(nameof(Student), request.Name));
     }
 
