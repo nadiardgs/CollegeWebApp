@@ -13,8 +13,7 @@ public class CreateCourseRequestHandler(CollegeDbContext context)
     {
         var course = new Course
         {
-            Title = request.Title,
-            TeacherId = request.TeacherId
+            Title = request.Title
         };
         
         context.Courses.Add(course);
@@ -24,6 +23,6 @@ public class CreateCourseRequestHandler(CollegeDbContext context)
             .Include(g => g.Teacher)
             .FirstAsync(g => g.Id == course.Id, ct);
 
-        return new CreateCourseResponse(result.Id, result.Title, result.Teacher.Name);
+        return new CreateCourseResponse(result.Id, result.Title);
     }
 }

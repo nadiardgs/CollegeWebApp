@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Features.Courses.Requests;
 
-public record CreateCourseRequest(string Title, int TeacherId) : IRequest<CreateCourseResponse>;
+public record CreateCourseRequest(string Title) : IRequest<CreateCourseResponse>;
