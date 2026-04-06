@@ -3,27 +3,22 @@ using Application.Features.Students.Requests;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions.Students;
 
 namespace Application.Features.Students.Validators;
 
 public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequest>
 {
-    private readonly CollegeDbContext _context;
-
-    public CreateStudentRequestValidator(CollegeDbContext context)
+    public CreateStudentRequestValidator(CollegeDbContext dbContext)
     {
-        _context = context;
+        var context = dbContext;
 
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
             .WithMessage(ErrorMessages.MinLength(nameof(Student)))
-            .MustAsync(BeUniqueName).WithMessage(request => ErrorMessages.UniqueName(nameof(Student), request.Name));
+            .MustAsync((name, ct) => context.Students.IsNameUniqueAsync(name, ct))
+            .WithMessage(request => ErrorMessages.UniqueName(nameof(Student), request.Name));
     }
-
-    private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
-    {
-        return !await _context.Students.AnyAsync(c => c.Name == name, cancellationToken);
-    }
+    
 }

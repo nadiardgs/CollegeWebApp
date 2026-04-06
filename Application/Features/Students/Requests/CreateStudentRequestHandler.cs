@@ -3,7 +3,7 @@ using Application.Features.Students.Responses;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions.Students;
 
 namespace Application.Features.Students.Requests;
 
@@ -12,9 +12,8 @@ public class CreateStudentRequestHandler(CollegeDbContext context)
 {
     public async Task<UpsertStudentResponse> Handle(CreateStudentRequest request, CancellationToken ct)
     {
-        var exists = await context.Students.AnyAsync(s => s.Name == request.Name, ct);
-        if (exists)
-            throw new UniqueNameException(nameof(Student), request.Name);
+        var exists = await context.Students.IsNameUniqueAsync(request.Name, ct);
+            if (!exists) throw new UniqueNameException(nameof(Student), request.Name);
         
         var student = new Student() { Name = request.Name };
         

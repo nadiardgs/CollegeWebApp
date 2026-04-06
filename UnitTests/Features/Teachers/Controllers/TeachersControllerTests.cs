@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApplication3.Controllers;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace UnitTests.Features.Teachers.Controllers;
 
@@ -58,11 +57,11 @@ public class TeachersControllerTests
             .ThrowsAsync(new MinLengthException(nameof(Teacher)));
         
         // Act
-        var result = await Assert.ThrowsAsync<ValidationException>(() =>
+        var result = await Assert.ThrowsAsync<MinLengthException>(() =>
             _controller.Create(_createInvalidTeacherRequest));
         
         // Assert
-        Assert.Equal(ErrorMessages.MinLength(nameof(Teacher)), result.Message);   
+        Assert.Equal(ErrorMessages.MinLength(nameof(Teacher)), result.Message);
     }
     
     [Fact]
