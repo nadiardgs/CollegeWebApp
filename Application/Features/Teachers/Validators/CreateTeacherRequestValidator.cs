@@ -3,7 +3,7 @@ using Application.Features.Teachers.Requests;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions.Teachers;
 
 namespace Application.Features.Teachers.Validators;
 
@@ -18,11 +18,7 @@ public class CreateTeacherRequestValidator : AbstractValidator<CreateTeacherRequ
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
-            .MustAsync(BeUniqueName).WithMessage(request => ErrorMessages.UniqueName(nameof(Teacher), request.Name));
-    }
-
-    private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
-    {
-        return !await _context.Teachers.AnyAsync(s => s.Name == name, cancellationToken);
+            .MustAsync((name, ct) => context.Teachers.IsNameUniqueAsync(name, ct))
+            .WithMessage(request => ErrorMessages.UniqueName(nameof(Teacher), request.Name));
     }
 }

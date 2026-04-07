@@ -1,6 +1,5 @@
 using Application.Features.Courses.Requests;
 using Application.Features.Courses.Responses;
-using Application.Features.Teachers.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

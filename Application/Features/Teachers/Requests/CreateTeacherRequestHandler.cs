@@ -2,6 +2,7 @@ using Application.Exceptions;
 using Application.Features.Teachers.Responses;
 using Domain.Entities;
 using Infrastructure;
+using Infrastructure.Extensions.Teachers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,8 @@ public class CreateTeacherRequestHandler(CollegeDbContext context)
 {
     public async Task<CreateTeacherResponse> Handle(CreateTeacherRequest request, CancellationToken ct)
     {
-        var exists = await context.Teachers.AnyAsync(s => s.Name == request.Name, ct);
-        if (exists)
-            throw new UniqueNameException(nameof(Teacher), request.Name);
+        var exists = await context.Teachers.IsNameUniqueAsync(request.Name, ct);
+        if (!exists) throw new UniqueNameException(nameof(Student), request.Name);
         
         var teacher = new Teacher { Name = request.Name };
         
