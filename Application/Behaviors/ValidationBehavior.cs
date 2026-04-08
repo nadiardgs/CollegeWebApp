@@ -9,10 +9,8 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
-        Console.WriteLine($"---> Pipeline triggered for {typeof(TRequest).Name}");
         if (!validators.Any())
         {
-            Console.WriteLine("---> No validators found for this request!");
             return await next(ct);
         }
 
