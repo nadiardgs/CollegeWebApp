@@ -22,38 +22,44 @@ public class BulkGradeStudentsRequestHandler(CollegeDbContext context)
             throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
         var studentIds = request.Grades.Select(g => g.StudentId).ToList();
-
-        var existingGrades = await context.Grades
-            .Where(g => g.CourseId == request.CourseId && studentIds.Contains(g.StudentId))
-            .ToListAsync(ct);
         
-        var validGrades = request.Grades
+        var enrollments = await context.Enrollments
+            .Include(e => e.Grades)
+            .Where(e => e.CourseId == request.CourseId && studentIds.Contains(e.StudentId))
+            .ToListAsync(ct);
+
+        var validGradeDtos = request.Grades
             .Where(g => g.Value.HasValue)
             .ToList();
-        
-        foreach (var gradeDto in validGrades)
+
+        foreach (var gradeDto in validGradeDtos)
         {
             var incomingValue = gradeDto.Value!.Value;
             
-            var existing = existingGrades.FirstOrDefault(g => g.StudentId == gradeDto.StudentId);
+            var enrollment = enrollments.FirstOrDefault(e => e.StudentId == gradeDto.StudentId);
 
-            if (existing != null)
+            if (enrollment == null)
             {
-                existing.Value = incomingValue;
+                continue; 
+            }
+
+            var existingGrade = enrollment.Grades.FirstOrDefault();
+
+            if (existingGrade != null)
+            {
+                existingGrade.Value = incomingValue;
             }
             else
             {
                 context.Grades.Add(new Grade
                 {
-                    CourseId = request.CourseId,
-                    StudentId = gradeDto.StudentId,
+                    EnrollmentId = enrollment.Id,
                     Value = incomingValue
                 });
             }
         }
 
         await context.SaveChangesAsync(ct);
-        
         return true;
     }
 }

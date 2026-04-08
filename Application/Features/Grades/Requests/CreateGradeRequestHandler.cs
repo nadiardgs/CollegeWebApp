@@ -16,18 +16,21 @@ public class CreateGradeRequestHandler(CollegeDbContext context)
         var grade = new Grade
         {
             Value = request.Value,
-            StudentId = request.StudentId,
-            CourseId = request.CourseId
+            Enrollment = new Enrollment
+            {
+                CourseId = request.CourseId,
+                StudentId = request.StudentId
+            }
         };
         
         context.Grades.Add(grade);
         await context.SaveChangesAsync(ct);
         
-        var result = await context.Grades
-            .Include(g => g.Student)
-            .Include(g => g.Course)
+        var result = await context.Grades.Include(g => g.Enrollment)
+            .ThenInclude(enrollment => enrollment.Student).Include(g => g.Enrollment)
+            .ThenInclude(enrollment => enrollment.Course)
             .FirstAsync(g => g.Id == grade.Id, ct);
 
-        return new CreateGradeResponse(result.Id, result.Value, result.Student.Name, result.Course.Title);
+        return new CreateGradeResponse(result.Id, result.Value, result.Enrollment.Student.Name, result.Enrollment.Course.Title);
     }
 }

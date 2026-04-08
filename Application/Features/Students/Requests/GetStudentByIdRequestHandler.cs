@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Application.Features.Students.Responses;
@@ -18,15 +19,18 @@ public class GetStudentByIdRequestHandler (CollegeDbContext context)
         var result = await context.Students
             .AsNoTracking()
             .Where(s => s.Id == request.Id)
-            .Select(s=> new GetStudentByIdResponse(
+            .Select(s => new GetStudentByIdResponse(
                 s.Id,
                 s.Name,
-                s.Courses.Select(
-                    c => new CourseDto(
-                        c.Id, 
-                        c.Title))
-                    .ToList()))
+                s.Enrollments.Select(e => new CourseDto(
+                    e.CourseId, 
+                    e.Course.Title
+                )).ToList()
+            ))
             .FirstOrDefaultAsync(cancellationToken);
+
+        if (result == null) 
+            throw new EntityNotFoundException(nameof(Student), request.Id);
         
         return result ?? throw new EntityNotFoundException(nameof(Student), request.Id);
     }

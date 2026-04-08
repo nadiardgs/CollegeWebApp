@@ -24,34 +24,41 @@ public static class DbSeeder
 
         var student1 = new Student
         {
-            Name = "John Smith",
-            Courses = [course]
+            Name = "John Smith"
         };
         
         var student2 = new Student
         {
-            Name = "Mary Smith",
-            Courses = [course]
+            Name = "Mary Smith"
         };
         
         var grade1 = new Grade 
         {
-            Value = 9.5m, 
-            Student = student1,
-            Course = course
+            Value = 9.5m
         };
         
         var grade2 = new Grade 
         {
-            Value = 9.5m, 
-            Student = student2, 
-            Course = course
+            Value = 9.5m
         };
 
+        var enrollment1 = new Enrollment
+        {
+            StudentId = student1.Id,
+            CourseId = course.Id
+        };
+
+        var enrollment2 = new Enrollment
+        {
+            StudentId = student2.Id,
+            CourseId = course.Id
+        };
+        
         await context.Teachers.AddAsync(teacher);
         await context.Courses.AddAsync(course);
         await context.Students.AddRangeAsync(student1, student2);
         await context.Grades.AddRangeAsync(grade1, grade2);
+        await context.Enrollments.AddRangeAsync(enrollment1, enrollment2);
         
         await context.SaveChangesAsync();
     }

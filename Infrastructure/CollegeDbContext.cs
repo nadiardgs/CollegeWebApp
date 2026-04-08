@@ -11,6 +11,7 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
     public DbSet<Grade> Grades => Set<Grade>();
     public DbSet<Book> Books => Set<Book>();
     public DbSet<Loan> Loans => Set<Loan>();
+    public DbSet<Enrollment> Enrollments => Set<Enrollment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,9 +19,6 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
 
         modelBuilder.Entity<Grade>(entity =>
         {
-            entity.HasIndex(g => new { g.StudentId, g.CourseId })
-                .IsUnique();
-
             entity.Property(g => g.Value)
                 .HasPrecision(5, 2);
         });
@@ -29,8 +27,6 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
         {
             entity.HasIndex(s => s.Name)
                 .IsUnique();
-            entity.HasMany(s => s.Courses)
-                .WithMany(c => c.Students);
         });
 
         modelBuilder.Entity<Course>(entity =>
@@ -56,7 +52,24 @@ public class CollegeDbContext(DbContextOptions<CollegeDbContext> options) : DbCo
 
             entity.Property(l => l.BorrowedAt).IsRequired();
         });
-  
+
+        modelBuilder.Entity<Enrollment>(entity =>
+        {
+            entity
+                .HasIndex(e => new { e.StudentId, e.CourseId })
+                .IsUnique();
+
+            entity                
+                .HasOne(e => e.Student)
+                .WithMany(s => s.Enrollments)
+                .HasForeignKey(e => e.StudentId);
+
+            entity
+                .HasOne(e => e.Course)
+                .WithMany(c => c.Enrollments)
+                .HasForeignKey(e => e.CourseId);
+        });
+        
         base.OnModelCreating(modelBuilder);
     }
 }

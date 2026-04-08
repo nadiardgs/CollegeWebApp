@@ -17,14 +17,15 @@ public class CreateGradeRequestValidator : AbstractValidator<CreateGradeRequest>
             .InclusiveBetween(0, 10).WithMessage("Grades must be between 0 and 10.");
 
         RuleFor(x => x)
-            .MustAsync(BeEnrolledInCourse)
+            .MustAsync(BeEnrolledAsync)
             .WithMessage("Cannot assign a grade to a student who is not enrolled in this course.");
     }
 
-    private async Task<bool> BeEnrolledInCourse(CreateGradeRequest grade, CancellationToken ct)
+    private async Task<bool> BeEnrolledAsync(CreateGradeRequest request, CancellationToken ct)
     {
-        return await _context.Courses
-            .AnyAsync(c => c.Id == grade.CourseId && 
-                           c.Students.Any(s => s.Id == grade.StudentId), ct);
+        return await _context.Enrollments.AnyAsync(e => 
+                e.StudentId == request.StudentId && 
+                e.CourseId == request.CourseId, 
+            ct);
     }
 }

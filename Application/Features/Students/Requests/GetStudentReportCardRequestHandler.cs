@@ -25,14 +25,11 @@ public class GetStudentReportCardRequestHandler(CollegeDbContext context)
             .Select(s => new GetStudentReportCardResponse(
                 s.Id,
                 s.Name,
-                s.Courses.Select(course => new GradeDto(
-                    course.Title,
-                    course.Teacher.Name,
+                s.Enrollments.Select(e => new GradeDto(
+                    e.Course.Title,
+                    e.Course.Teacher.Name,
                     s.Id,
-                    context.Grades
-                        .Where(g => g.StudentId == s.Id && g.CourseId == course.Id)
-                        .Select(g => (decimal?)g.Value)
-                        .FirstOrDefault()
+                    e.Grades.Select(g => (decimal?)g.Value).FirstOrDefault()
                 )).ToList()
             ))
             .FirstOrDefaultAsync(ct);

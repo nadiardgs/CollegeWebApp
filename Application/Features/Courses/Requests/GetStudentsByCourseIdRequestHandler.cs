@@ -19,7 +19,7 @@ public class GetStudentsByCourseIdRequestHandler(CollegeDbContext context)
             .Select(c => new GetStudentsByCourseIdResponse(
                 c.Title,
                 c.Teacher.Name,
-                c.Students.Select(s => s.Name).ToList()
+                c.Enrollments.Select(s => s.Student.Name).ToList()
             )).AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
 

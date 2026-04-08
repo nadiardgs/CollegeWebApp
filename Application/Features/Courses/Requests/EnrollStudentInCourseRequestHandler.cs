@@ -13,17 +13,31 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
 {
     public async Task<EnrollStudentInCourseResponse> Handle(EnrollStudentInCourseRequest request, CancellationToken cancellationToken)
     {
-        var course = await context.Courses
-                         .Include(c => c.Students) 
-                         .FirstOrDefaultAsync(c => c.Id == request.CourseId, cancellationToken)
-                     ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
+        var courseExists = await context.Courses.AnyAsync(c => c.Id == request.CourseId, cancellationToken);
+        if (!courseExists) 
+            throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
-        var student = await context.Students.FindAsync([request.StudentId], cancellationToken)
-                      ?? throw new EntityNotFoundException(nameof(Student), request.StudentId);
+        var studentExists = await context.Students.AnyAsync(s => s.Id == request.StudentId, cancellationToken);
+        if (!studentExists) 
+            throw new EntityNotFoundException(nameof(Student), request.StudentId);
 
-        if (course.Students.Any(s => s.Id == request.StudentId)) return new EnrollStudentInCourseResponse(true);
-        
-        course.Students.Add(student);
+        var alreadyEnrolled = await context.Enrollments.AnyAsync(e => 
+                e.StudentId == request.StudentId && e.CourseId == request.CourseId, 
+            cancellationToken);
+
+        if (alreadyEnrolled) 
+        {
+            return new EnrollStudentInCourseResponse(true);
+        }
+
+        var enrollment = new Enrollment
+        {
+            StudentId = request.StudentId,
+            CourseId = request.CourseId,
+            EnrolledAt = DateTime.UtcNow
+        };
+
+        context.Enrollments.Add(enrollment);
         await context.SaveChangesAsync(cancellationToken);
 
         return new EnrollStudentInCourseResponse(true);
