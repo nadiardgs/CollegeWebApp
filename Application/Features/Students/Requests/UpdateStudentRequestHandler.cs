@@ -7,20 +7,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Students.Requests;
 
-public class UpdateStudentRequestHandler(CollegeDbContext context) : IRequestHandler<UpdateStudentRequest, UpsertStudentResponse>
+public class UpdateStudentRequestHandler(CollegeDbContext context) : IRequestHandler<UpdateStudentRequest, StudentDto>
 {
-    public async Task<UpsertStudentResponse> Handle(UpdateStudentRequest request, CancellationToken cancellationToken)
+    public async Task<StudentDto> Handle(UpdateStudentRequest request, CancellationToken cancellationToken)
     {
         var student =
             await context.Students.FirstOrDefaultAsync(s => s.Id == request.Id,
                 cancellationToken: cancellationToken)
             ?? throw new EntityNotFoundException(nameof(Student), request.Id);
 
-        var studentDto = new UpsertStudentResponse(
-            new StudentDto(
+        var studentDto = new StudentDto(
                 student.Id,
-                student.Name)
-        );
+                student.Name);
         
         if (student.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
             return studentDto;

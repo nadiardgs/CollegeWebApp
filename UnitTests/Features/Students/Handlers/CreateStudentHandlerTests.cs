@@ -43,11 +43,11 @@ public class CreateStudentHandlerTests
         // Assert
         var studentInDb = await _context.Students
             .AsNoTracking()
-            .FirstOrDefaultAsync(s => s.Id == result.Student.Id);
+            .FirstOrDefaultAsync(s => s.Id == result.Id);
         
         Assert.NotNull(studentInDb);
-        Assert.Equal(_validStudentRequest.Name, studentInDb.Name); Assert.Equal(studentInDb.Id, result.Student.Id);
-        Assert.Equal(studentInDb.Name, result.Student.Name);
+        Assert.Equal(_validStudentRequest.Name, studentInDb.Name); Assert.Equal(studentInDb.Id, result.Id);
+        Assert.Equal(studentInDb.Name, result.Name);
     }
     
     [Fact]

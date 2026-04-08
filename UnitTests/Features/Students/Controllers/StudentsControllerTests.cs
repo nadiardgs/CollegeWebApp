@@ -32,10 +32,8 @@ public class StudentsControllerTests
     public async Task Create_ShouldReturnOk_WhenStudentIsCreated()
     {
         // Arrange
-        var expectedResponse = new UpsertStudentResponse(
-            new StudentDto(
-                1, _createValidStudentRequest1.Name)
-        );
+        var expectedResponse = new StudentDto(
+                1, _createValidStudentRequest1.Name);
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateStudentRequest>(), CancellationToken.None))
@@ -139,16 +137,16 @@ public class StudentsControllerTests
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<UpdateStudentRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((UpdateStudentRequest req, CancellationToken ct) => 
-                new UpsertStudentResponse(new StudentDto(1, req.Name)));
+                new StudentDto(1, req.Name));
         // Act
         var result = await _controller.Update(studentId, updateRequest);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var actual = Assert.IsType<UpsertStudentResponse>(okResult.Value);
+        var actual = Assert.IsType<StudentDto>(okResult.Value);
     
-        Assert.Equal(updatedName, actual.Student.Name);
-        Assert.Equal(studentId, actual.Student.Id);
+        Assert.Equal(updatedName, actual.Name);
+        Assert.Equal(studentId, actual.Id);
     }
     
     [Theory]

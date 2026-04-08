@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Students.Requests;
 
-public class UpdateStudentRequest : IRequest<UpsertStudentResponse>
+public class UpdateStudentRequest : IRequest<StudentDto>
 {
     [JsonIgnore]
     public int Id { get; set; } 

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Features.Students.Requests;
 
-public record CreateStudentRequest(string Name) : IRequest<UpsertStudentResponse>;
+public record CreateStudentRequest(string Name) : IRequest<StudentDto>;

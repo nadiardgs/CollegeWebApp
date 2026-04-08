@@ -8,9 +8,9 @@ using Infrastructure.Extensions.Students;
 namespace Application.Features.Students.Requests;
 
 public class CreateStudentRequestHandler(CollegeDbContext context)
-    : IRequestHandler<CreateStudentRequest, UpsertStudentResponse>
+    : IRequestHandler<CreateStudentRequest, StudentDto>
 {
-    public async Task<UpsertStudentResponse> Handle(CreateStudentRequest request, CancellationToken ct)
+    public async Task<StudentDto> Handle(CreateStudentRequest request, CancellationToken ct)
     {
         var exists = await context.Students.IsNameUniqueAsync(request.Name, ct);
             if (!exists) throw new UniqueNameException(nameof(Student), request.Name);
@@ -20,11 +20,9 @@ public class CreateStudentRequestHandler(CollegeDbContext context)
         context.Students.Add(student);
         await context.SaveChangesAsync(ct);
 
-        return new UpsertStudentResponse(
-            new StudentDto(
+        return new StudentDto(
                 student.Id, 
-                student.Name)
-        );
+                student.Name);
     }
 
 

@@ -16,7 +16,7 @@ public class StudentsController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(request);
         return CreatedAtAction(
             nameof(GetById), 
-            new { id = result.Student.Id }, 
+            new { id = result.Id }, 
             result);
     }
     

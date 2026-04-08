@@ -12,7 +12,7 @@ public class GetStudentByIdHandlerTests
 {
     private readonly CollegeDbContext _context;
     private readonly GetStudentByIdRequestHandler _handler;
-    private readonly UpsertStudentResponse _studentRequest;
+    private readonly StudentDto _studentRequest;
     
     public GetStudentByIdHandlerTests()
     {
@@ -23,14 +23,14 @@ public class GetStudentByIdHandlerTests
         _context = new CollegeDbContext(options);
         _handler = new GetStudentByIdRequestHandler(_context);
         
-        _studentRequest = new UpsertStudentResponse(new StudentDto(1, "Mary Smith"));
+        _studentRequest = new StudentDto(1, "Mary Smith");
     }
     
     [Fact]
     public async Task Handle_ShouldReturnStudent_WhenExists()
     {
         // Arrange
-        var student = new Student { Name = _studentRequest.Student.Name };
+        var student = new Student { Name = _studentRequest.Name };
         _context.Students.Add(student);
         await _context.SaveChangesAsync(); 
 
@@ -41,14 +41,14 @@ public class GetStudentByIdHandlerTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(_studentRequest.Student.Name, result.Name);
+        Assert.Equal(_studentRequest.Name, result.Name);
     }
     
     [Fact]
     public async Task Handle_Should_NotGetStudent_WhenDoesntExist()
     {
         // Arrange
-        var request = new GetStudentByIdRequest(_studentRequest.Student.Id);
+        var request = new GetStudentByIdRequest(_studentRequest.Id);
 
         // Act
         var result = await Assert.ThrowsAsync<EntityNotFoundException>(() =>
