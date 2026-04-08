@@ -103,4 +103,27 @@ public class StudentsControllerTests
         var actualStudents = Assert.IsType<ApiResult<IEnumerable<StudentDto>>>(okResult.Value, exactMatch: false);
         Assert.Equal(expectedStudents.Count, actualStudents.Data.Count());
     }
+    
+    [Fact]
+    public async Task GetAll_ShouldReturnEmptyList_WhenNoStudentExists()
+    {
+        // Arrange
+        var request = new ApiResult<IEnumerable<StudentDto>>(
+            new List<StudentDto>(), 
+            ReturnMessages.CollectionNotFound(nameof(Student)));
+        
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<GetAllStudentsRequest>(), CancellationToken.None))
+            .ReturnsAsync(request);
+
+        // Act
+        var result = await _controller.GetAll();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var actualStudents = Assert.IsType<ApiResult<IEnumerable<StudentDto>>>(okResult.Value, exactMatch: false);
+        
+        Assert.Empty(actualStudents.Data.ToList());
+        Assert.Equal(actualStudents.Message, ReturnMessages.CollectionNotFound(nameof(Student)));
+    }
 }
