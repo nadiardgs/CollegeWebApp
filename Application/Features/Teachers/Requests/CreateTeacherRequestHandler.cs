@@ -14,7 +14,7 @@ public class CreateTeacherRequestHandler(CollegeDbContext context)
     public async Task<CreateTeacherResponse> Handle(CreateTeacherRequest request, CancellationToken ct)
     {
         var exists = await context.Teachers.IsNameUniqueAsync(request.Name, ct);
-        if (!exists) throw new UniqueNameException(nameof(Student), request.Name);
+        if (!exists) throw new UniqueNameException(nameof(Teacher), request.Name);
         
         var teacher = new Teacher { Name = request.Name };
         
