@@ -1,5 +1,4 @@
 using Application.Constants;
-using Application.Exceptions;
 using Application.Features.Students.Requests;
 using Application.Features.Students.Responses;
 using Domain.Entities;
@@ -50,7 +49,7 @@ public class GetAllStudentsHandlerTests
         
         var studentDtos = result.Data.ToList();
         
-        Assert.Equal(2, studentDtos.Count);
+        Assert.Equal(ReturnMessages.Success(studentDtos.Count, nameof(Student)), result.Message);
         
         var resultStudent1 = studentDtos.FirstOrDefault(s => s.Id == _studentRequest1.Student.Id);
         Assert.NotNull(resultStudent1);
@@ -67,9 +66,11 @@ public class GetAllStudentsHandlerTests
         // Arrange
         var query = new GetAllStudentsRequest();
 
+        // Act
         var result = await _handler.Handle(query, CancellationToken.None);
         
         // Assert
-        //Assert.Equal(result.Message, ReturnMessages.CollectionNotFound(nameof(Student)));
+        Assert.Equal(result.Message, ReturnMessages.CollectionNotFound(nameof(Student)));
+        Assert.Empty(result.Data);
     }
 }

@@ -17,8 +17,10 @@ public class GetAllStudentsRequestHandler(CollegeDbContext context) : IRequestHa
             .Select(s => new StudentDto(s.Id, s.Name))
             .ToListAsync(cancellationToken: cancellationToken);
         
-        return result.Count == 0 
-            ? ApiResult<IEnumerable<StudentDto>>.Empty(ReturnMessages.CollectionNotFound(nameof(Student))) 
-            : ApiResult<IEnumerable<StudentDto>>.SuccessResult(result, ReturnMessages.Success(result.Count, nameof(Student)));
+        var message = result.Count != 0
+            ? ReturnMessages.Success(result.Count, nameof(Student)) 
+            : ReturnMessages.CollectionNotFound(nameof(Student));
+
+        return new ApiResult<IEnumerable<StudentDto>>(result, message);
     }
 }
