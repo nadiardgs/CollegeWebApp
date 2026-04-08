@@ -1,8 +1,8 @@
 using Application.Constants;
-using Application.Entities.Students.Requests;
 using Application.Exceptions;
 using Application.Features.Students.Requests;
 using Application.Features.Students.Responses;
+using Application.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -62,7 +62,7 @@ public class StudentsControllerTests
             _controller.Create(_createInvalidStudentRequest));
         
         // Assert
-        Assert.Equal(ErrorMessages.MinLength(nameof(Student)), result.Message);   
+        Assert.Equal(ReturnMessages.MinLength(nameof(Student)), result.Message);   
     }
     
     [Fact]
@@ -78,7 +78,7 @@ public class StudentsControllerTests
             _controller.Create(_createValidStudentRequest1));
         
         // Assert
-        Assert.Equal(ErrorMessages.UniqueName(nameof(Student), It.IsAny<string>()), result.Message);   
+        Assert.Equal(ReturnMessages.UniqueName(nameof(Student), It.IsAny<string>()), result.Message);   
     }
 
     [Fact]
@@ -93,14 +93,14 @@ public class StudentsControllerTests
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllStudentsRequest>(), CancellationToken.None))
-            .ReturnsAsync(expectedStudents);
+            .ReturnsAsync(new ApiResult<IEnumerable<StudentDto>>(expectedStudents));
 
         // Act
         var result = await _controller.GetAll();
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var actualStudents = Assert.IsType<IEnumerable<StudentDto>>(okResult.Value, exactMatch: false);
-        Assert.Equal(expectedStudents.Count, actualStudents.Count());
+        var actualStudents = Assert.IsType<ApiResult<IEnumerable<StudentDto>>>(okResult.Value, exactMatch: false);
+        Assert.Equal(expectedStudents.Count, actualStudents.Data.Count());
     }
 }

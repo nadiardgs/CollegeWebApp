@@ -56,7 +56,7 @@ public class GetTeacherByIdHandlerTests
         
         // Assert
         Assert.Empty(result.Data);
-        Assert.Equal(ErrorMessages.EntityNotFound(nameof(Teacher), request.Id), result.Message); 
+        Assert.Equal(ReturnMessages.EntityNotFound(nameof(Teacher), request.Id), result.Message); 
     }
     
 }

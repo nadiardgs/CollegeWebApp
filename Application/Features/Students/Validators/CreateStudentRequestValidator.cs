@@ -16,9 +16,9 @@ public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequ
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
-            .WithMessage(ErrorMessages.MinLength(nameof(Student)))
+            .WithMessage(ReturnMessages.MinLength(nameof(Student)))
             .MustAsync((name, ct) => context.Students.IsNameUniqueAsync(name, ct))
-            .WithMessage(request => ErrorMessages.UniqueName(nameof(Student), request.Name));
+            .WithMessage(request => ReturnMessages.UniqueName(nameof(Student), request.Name));
     }
     
 }

@@ -61,7 +61,7 @@ public class TeachersControllerTests
             _controller.Create(_createInvalidTeacherRequest));
         
         // Assert
-        Assert.Equal(ErrorMessages.MinLength(nameof(Teacher)), result.Message);
+        Assert.Equal(ReturnMessages.MinLength(nameof(Teacher)), result.Message);
     }
     
     [Fact]

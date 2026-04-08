@@ -40,7 +40,7 @@ public class CreateTeacherRequestValidatorTests
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ErrorMessages.MinLength(nameof(Teacher)));
+        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.MinLength(nameof(Teacher)));
     }
 
     [Fact]
@@ -71,6 +71,6 @@ public class CreateTeacherRequestValidatorTests
         // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors,
-            e => e.ErrorMessage == ErrorMessages.UniqueName(nameof(Teacher), existingTeacher.Name));
+            e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Teacher), existingTeacher.Name));
     }
 }

@@ -63,7 +63,7 @@ public class CreateStudentHandlerTests
             _handler.Handle(request, CancellationToken.None));
         
         // Assert
-        Assert.Equal(result.Message, ErrorMessages.UniqueName(nameof(Student), request.Name));
+        Assert.Equal(result.Message, ReturnMessages.UniqueName(nameof(Student), request.Name));
     }
     
     [Fact]
