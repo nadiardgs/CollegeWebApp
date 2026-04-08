@@ -150,4 +150,46 @@ public class StudentsControllerTests
         Assert.Equal(updatedName, actual.Student.Name);
         Assert.Equal(studentId, actual.Student.Id);
     }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("Az")]
+    public async Task Update_ShouldReturnFailure_WhenStudentNameIsInvalid(string? invalidName)
+    {
+        // Arrange
+        const int studentId = 1;
+
+        var updateRequest = new UpdateStudentRequest { Name = invalidName };
+        
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<UpdateStudentRequest>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new MinLengthException(nameof(Student)));
+        
+        // Act
+        var result = await Assert.ThrowsAsync<MinLengthException>(() 
+            => _controller.Update(studentId, updateRequest));
+
+        // Assert
+        Assert.Equal(ReturnMessages.MinLength(nameof(Student)), result.Message);
+    }
+    
+    [Fact]
+    public async Task Update_ShouldReturnFailure_WhenStudentIdIsInvalid()
+    {
+        // Arrange
+        const int studentId = 0;
+
+        var updateRequest = new UpdateStudentRequest { Name = _createValidStudentRequest1.Name };
+        
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<UpdateStudentRequest>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new EntityNotFoundException(nameof(Student), It.IsAny<int>()));
+        
+        // Act
+        var result = await Assert.ThrowsAsync<EntityNotFoundException>(() 
+            => _controller.Update(studentId, updateRequest));
+
+        // Assert
+        Assert.Equal(ReturnMessages.EntityNotFound(nameof(Student), studentId), result.Message);
+    }
 }
