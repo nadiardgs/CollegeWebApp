@@ -8,19 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Features.Teachers.Handlers;
 
-public class CreateTeacherHandlerTests
+public class CreateTeacherHandlerTests : IAsyncDisposable
 {
     private readonly CollegeDbContext _context;
     private readonly CreateTeacherRequestHandler _handler;
     private readonly CreateTeacherRequest _validTeacherRequest;
+    private readonly SqliteConnection _connection;
 
     public CreateTeacherHandlerTests()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
-        connection.Open();
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
 
         var options = new DbContextOptionsBuilder<CollegeDbContext>()
-            .UseSqlite(connection)
+            .UseSqlite(_connection)
             .Options;
 
         _context = new CollegeDbContext(options);
@@ -76,5 +77,17 @@ public class CreateTeacherHandlerTests
         // Act & Assert
         await Assert.ThrowsAsync<OperationCanceledException>(() => 
             _handler.Handle(_validTeacherRequest, cts.Token));
+    }
+
+    public void Dispose()
+    {
+        _connection.Dispose();
+        _connection.Close();
+        _context.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
     }
 }

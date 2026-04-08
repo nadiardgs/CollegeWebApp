@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Features.Students.Handlers;
 
-public class GetAllStudentsHandlerTests
+public class GetAllStudentsHandlerTests : IAsyncDisposable
 {
     private readonly CollegeDbContext _context;
     private readonly GetAllStudentsRequestHandler _handler;
@@ -72,5 +72,15 @@ public class GetAllStudentsHandlerTests
         // Assert
         Assert.Equal(result.Message, ReturnMessages.CollectionNotFound(nameof(Student)));
         Assert.Empty(result.Data);
+    }
+    
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
     }
 }

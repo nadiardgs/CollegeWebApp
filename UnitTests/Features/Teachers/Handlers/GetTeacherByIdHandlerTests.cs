@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Features.Teachers.Handlers;
 
-public class GetTeacherByIdHandlerTests
+public class GetTeacherByIdHandlerTests : IAsyncDisposable
 {
     private readonly CollegeDbContext _context;
     private readonly GetTeacherByIdRequestHandler _handler;
@@ -58,5 +58,14 @@ public class GetTeacherByIdHandlerTests
         Assert.Empty(result.Data);
         Assert.Equal(ReturnMessages.EntityNotFound(nameof(Teacher), request.Id), result.Message); 
     }
-    
+
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
 }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Features.Students.Validators;
 
-public class CreateStudentRequestValidatorTests
+public class CreateStudentRequestValidatorTests : IAsyncDisposable
 {
     private readonly CreateStudentRequestValidator _createStudentRequestValidator;
     private readonly StudentDto _validStudent;
@@ -71,5 +71,15 @@ public class CreateStudentRequestValidatorTests
         // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Student), existingStudent.Name));
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
     }
 }

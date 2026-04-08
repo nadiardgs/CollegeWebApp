@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Features.Students.Handlers;
 
-public class CreateStudentHandlerTests : IDisposable
+public class CreateStudentHandlerTests : IAsyncDisposable
 {
     private readonly CollegeDbContext _context;
     private readonly CreateStudentRequestHandler _handler;
@@ -30,13 +30,6 @@ public class CreateStudentHandlerTests : IDisposable
         _handler = new CreateStudentRequestHandler(_context);
         
         _validStudentRequest = new CreateStudentRequest("Alice Smith");
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-        _connection.Close();
-        _connection.Dispose();
     }
 
     [Fact]
@@ -87,5 +80,18 @@ public class CreateStudentHandlerTests : IDisposable
         // Act & Assert
         await Assert.ThrowsAsync<OperationCanceledException>(() => 
             _handler.Handle(_validStudentRequest, cts.Token));
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+        _connection.Close();
+        _connection.Dispose();
+    }
+    
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+        await _connection.DisposeAsync();
     }
 }
