@@ -8,19 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.Features.Students.Handlers;
 
-public class CreateStudentHandlerTests
+public class CreateStudentHandlerTests : IDisposable
 {
     private readonly CollegeDbContext _context;
     private readonly CreateStudentRequestHandler _handler;
     private readonly CreateStudentRequest _validStudentRequest;
+    private readonly  SqliteConnection _connection;
 
     public CreateStudentHandlerTests()
     {
-        var connection = new SqliteConnection("DataSource=:memory:");
-        connection.Open();
+        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection.Open();
 
         var options = new DbContextOptionsBuilder<CollegeDbContext>()
-            .UseSqlite(connection)
+            .UseSqlite(_connection)
             .Options;
 
         _context = new CollegeDbContext(options);
@@ -29,6 +30,13 @@ public class CreateStudentHandlerTests
         _handler = new CreateStudentRequestHandler(_context);
         
         _validStudentRequest = new CreateStudentRequest("Alice Smith");
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
+        _connection.Close();
+        _connection.Dispose();
     }
 
     [Fact]
@@ -46,8 +54,10 @@ public class CreateStudentHandlerTests
             .FirstOrDefaultAsync(s => s.Id == result.Id);
         
         Assert.NotNull(studentInDb);
-        Assert.Equal(_validStudentRequest.Name, studentInDb.Name); Assert.Equal(studentInDb.Id, result.Id);
+        Assert.Equal(_validStudentRequest.Name, studentInDb.Name); 
+        Assert.Equal(studentInDb.Id, result.Id);
         Assert.Equal(studentInDb.Name, result.Name);
+        Assert.Equal(1, await _context.Students.CountAsync());
     }
     
     [Fact]
@@ -64,6 +74,7 @@ public class CreateStudentHandlerTests
         
         // Assert
         Assert.Equal(result.Message, ReturnMessages.UniqueName(nameof(Student), request.Name));
+        Assert.Equal(1, await _context.Students.CountAsync());
     }
     
     [Fact]
