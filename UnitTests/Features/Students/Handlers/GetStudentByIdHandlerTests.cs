@@ -59,11 +59,6 @@ public class GetStudentByIdHandlerTests : IAsyncDisposable
         Assert.Equal(ReturnMessages.EntityNotFound(nameof(Student), request.Id), result.Message); 
     }
 
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();

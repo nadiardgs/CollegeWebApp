@@ -81,13 +81,6 @@ public class CreateStudentHandlerTests : IAsyncDisposable
         await Assert.ThrowsAsync<OperationCanceledException>(() => 
             _handler.Handle(_validStudentRequest, cts.Token));
     }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-        _connection.Close();
-        _connection.Dispose();
-    }
     
     public async ValueTask DisposeAsync()
     {

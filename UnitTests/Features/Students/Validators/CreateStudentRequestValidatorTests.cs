@@ -73,11 +73,6 @@ public class CreateStudentRequestValidatorTests : IAsyncDisposable
         Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Student), existingStudent.Name));
     }
 
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();

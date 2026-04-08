@@ -1,7 +1,5 @@
 using Application.Features.Books.Requests;
 using Application.Features.Books.Responses;
-using Application.Requests.Books;
-using Application.Responses.Books;
 using Application.Responses.Books.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

@@ -74,11 +74,6 @@ public class GetAllTeachersHandlerTests : IAsyncDisposable
         Assert.Empty(result.Data);
     }
 
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();

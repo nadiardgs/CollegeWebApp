@@ -74,11 +74,6 @@ public class CreateTeacherRequestValidatorTests : IAsyncDisposable
             e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Teacher), existingTeacher.Name));
     }
 
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();

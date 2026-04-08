@@ -79,13 +79,6 @@ public class CreateTeacherHandlerTests : IAsyncDisposable
             _handler.Handle(_validTeacherRequest, cts.Token));
     }
 
-    public void Dispose()
-    {
-        _connection.Dispose();
-        _connection.Close();
-        _context.Dispose();
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();
