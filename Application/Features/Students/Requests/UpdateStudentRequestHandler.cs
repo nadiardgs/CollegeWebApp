@@ -1,4 +1,3 @@
-using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Students.Responses;
 using Domain.Entities;
@@ -17,16 +16,18 @@ public class UpdateStudentRequestHandler(CollegeDbContext context) : IRequestHan
                 cancellationToken: cancellationToken)
             ?? throw new EntityNotFoundException(nameof(Student), request.Id);
 
-        if (!student.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
-        {
-            student.Name = request.Name;
-            await context.SaveChangesAsync(cancellationToken);
-        }
-
-        return new UpsertStudentResponse(
+        var studentDto = new UpsertStudentResponse(
             new StudentDto(
-                student.Id, 
+                student.Id,
                 student.Name)
         );
+        
+        if (student.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
+            return studentDto;
+        
+        student.Name = request.Name;
+        await context.SaveChangesAsync(cancellationToken);
+
+        return studentDto;
     }
 }

@@ -126,4 +126,28 @@ public class StudentsControllerTests
         Assert.Empty(actualStudents.Data.ToList());
         Assert.Equal(actualStudents.Message, ReturnMessages.CollectionNotFound(nameof(Student)));
     }
+    
+    [Fact]
+    public async Task Update_ShouldReturnOk_WhenStudentIsValid()
+    {
+        // Arrange
+        const int studentId = 1;
+        const string updatedName = "New Name";
+    
+        var updateRequest = new UpdateStudentRequest { Name = updatedName };
+        
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<UpdateStudentRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((UpdateStudentRequest req, CancellationToken ct) => 
+                new UpsertStudentResponse(new StudentDto(1, req.Name)));
+        // Act
+        var result = await _controller.Update(studentId, updateRequest);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var actual = Assert.IsType<UpsertStudentResponse>(okResult.Value);
+    
+        Assert.Equal(updatedName, actual.Student.Name);
+        Assert.Equal(studentId, actual.Student.Id);
+    }
 }
