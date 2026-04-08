@@ -1,5 +1,6 @@
 using Application.Features.Teachers.Requests;
 using Application.Features.Teachers.Responses;
+using Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ public class TeachersController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TeacherDto>>> GetAll()
+    public async Task<ActionResult<ApiResult<IEnumerable<TeacherDto>>>> GetAll()
     {
         var query = new GetAllTeachersRequest();
         var result = await mediator.Send(query);

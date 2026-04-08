@@ -2,6 +2,7 @@ using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Teachers.Requests;
 using Application.Features.Teachers.Responses;
+using Application.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -76,14 +77,37 @@ public class TeachersControllerTests
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllTeachersRequest>(), CancellationToken.None))
-            .ReturnsAsync(expectedTeachers);
+            .ReturnsAsync(new ApiResult<IEnumerable<TeacherDto>>(expectedTeachers));
 
         // Act
         var result = await _controller.GetAll();
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var actualTeachers = Assert.IsType<IEnumerable<TeacherDto>>(okResult.Value, exactMatch: false);
-        Assert.Equal(2, actualTeachers.Count());
+        var actualTeachers = Assert.IsType<ApiResult<IEnumerable<TeacherDto>>>(okResult.Value, exactMatch: false);
+        Assert.Equal(expectedTeachers.Count, actualTeachers.Data.Count());
+    }
+    
+    [Fact]
+    public async Task GetAll_ShouldReturnEmptyList_WhenNoTeacherExists()
+    {
+        // Arrange
+        var request = new ApiResult<IEnumerable<TeacherDto>>(
+            new List<TeacherDto>(), 
+            ReturnMessages.CollectionNotFound(nameof(Teacher)));
+        
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<GetAllTeachersRequest>(), CancellationToken.None))
+            .ReturnsAsync(request);
+
+        // Act
+        var result = await _controller.GetAll();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var actualTeachers = Assert.IsType<ApiResult<IEnumerable<TeacherDto>>>(okResult.Value, exactMatch: false);
+        
+        Assert.Empty(actualTeachers.Data.ToList());
+        Assert.Equal(actualTeachers.Message, ReturnMessages.CollectionNotFound(nameof(Teacher)));
     }
 }
