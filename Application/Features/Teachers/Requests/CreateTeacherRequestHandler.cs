@@ -4,7 +4,6 @@ using Domain.Entities;
 using Infrastructure;
 using Infrastructure.Extensions.Teachers;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Teachers.Requests;
 
