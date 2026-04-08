@@ -1,12 +1,12 @@
-using Application.Features.Books.Requests;
 using Application.Features.Books.Responses;
-using Application.Responses.Books;
 using Application.Responses.Books.DTOs;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
 
-namespace Application.Requests.Books;
+namespace Application.Features.Books.Requests;
+
+public record CreateBookRequest(string Title) : IRequest<CreateBookResponse>;
 
 public class CreateBookRequestHandler (CollegeDbContext context)
     : IRequestHandler<CreateBookRequest, CreateBookResponse>

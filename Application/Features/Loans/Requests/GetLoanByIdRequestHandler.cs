@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Loans.Requests;
 
+public record GetLoanByIdRequest(int Id) : IRequest<LoanDto>;
+
 public class GetLoanByIdRequestHandler(CollegeDbContext context) : IRequestHandler<GetLoanByIdRequest, LoanDto>
 {
     public async Task<LoanDto> Handle(GetLoanByIdRequest request, CancellationToken cancellationToken)

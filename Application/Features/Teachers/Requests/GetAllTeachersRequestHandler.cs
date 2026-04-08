@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Teachers.Requests;
 
+public record GetAllTeachersRequest : IRequest<ApiResult<IEnumerable<TeacherDto>>>;
+
 public class GetAllTeachersRequestHandler(CollegeDbContext context) : IRequestHandler<GetAllTeachersRequest, ApiResult<IEnumerable<TeacherDto>>>
 {
     public async Task<ApiResult<IEnumerable<TeacherDto>>> Handle(GetAllTeachersRequest request, CancellationToken cancellationToken)

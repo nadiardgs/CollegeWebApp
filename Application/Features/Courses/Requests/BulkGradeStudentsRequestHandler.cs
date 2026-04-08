@@ -1,10 +1,16 @@
 using Application.Exceptions;
+using Application.Features.Grades.Responses;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
+
+public record BulkGradeStudentsRequest (
+    int CourseId, 
+    IReadOnlyCollection<GradeDto> Grades
+) : IRequest<bool>;
 
 public class BulkGradeStudentsRequestHandler(CollegeDbContext context) 
     : IRequestHandler<BulkGradeStudentsRequest, bool>

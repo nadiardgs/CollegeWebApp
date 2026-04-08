@@ -7,6 +7,8 @@ using Infrastructure.Extensions.Students;
 
 namespace Application.Features.Students.Requests;
 
+public record CreateStudentRequest(string Name) : IRequest<StudentDto>;
+
 public class CreateStudentRequestHandler(CollegeDbContext context)
     : IRequestHandler<CreateStudentRequest, StudentDto>
 {

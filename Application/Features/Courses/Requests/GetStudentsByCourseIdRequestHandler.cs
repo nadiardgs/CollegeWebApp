@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
+public record GetStudentsByCourseIdRequest(int CourseId): IRequest<GetStudentsByCourseIdResponse>;
+
 public class GetStudentsByCourseIdRequestHandler(CollegeDbContext context)
     : IRequestHandler<GetStudentsByCourseIdRequest, GetStudentsByCourseIdResponse>
 {

@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Students.Requests;
 
+public record GetStudentReportCardRequest(int StudentId) : IRequest<GetStudentReportCardResponse>;
+
 public class GetStudentReportCardRequestHandler(CollegeDbContext context) 
     : IRequestHandler<GetStudentReportCardRequest, GetStudentReportCardResponse>
 {

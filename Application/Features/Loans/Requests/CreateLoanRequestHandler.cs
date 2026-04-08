@@ -5,6 +5,8 @@ using MediatR;
 
 namespace Application.Features.Loans.Requests;
 
+public record CreateLoanRequest(int StudentId, int BookId) : IRequest<CreateLoanResponse>;
+
 public class CreateLoanRequestHandler(CollegeDbContext context) : IRequestHandler<CreateLoanRequest, CreateLoanResponse>
 {
     public async Task<CreateLoanResponse> Handle(CreateLoanRequest request, CancellationToken ct)

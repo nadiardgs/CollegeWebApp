@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Grades.Requests;
 
+public record CreateGradeRequest(decimal Value, int CourseId, int StudentId) : IRequest<CreateGradeResponse>;
+
 public class CreateGradeRequestHandler(CollegeDbContext context)
     : IRequestHandler<CreateGradeRequest, CreateGradeResponse>
 {

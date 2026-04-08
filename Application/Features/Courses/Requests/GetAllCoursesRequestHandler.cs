@@ -1,4 +1,3 @@
-using Application.Constants;
 using Application.Features.Courses.Responses;
 using Application.Exceptions;
 using Domain.Entities;
@@ -7,6 +6,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
+
+public record GetAllCoursesRequest : IRequest<IEnumerable<CourseDto>>;
 
 public class GetAllCoursesRequestHandler(CollegeDbContext context) : IRequestHandler<GetAllCoursesRequest, IEnumerable<CourseDto>>
 {

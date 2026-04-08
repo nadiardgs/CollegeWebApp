@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
+public record CreateCourseRequest(string Title) : IRequest<CreateCourseResponse>;
+
 public class CreateCourseRequestHandler(CollegeDbContext context)
     : IRequestHandler<CreateCourseRequest, CreateCourseResponse>
 {

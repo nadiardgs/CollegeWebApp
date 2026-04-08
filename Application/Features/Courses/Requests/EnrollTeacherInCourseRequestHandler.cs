@@ -6,6 +6,8 @@ using MediatR;
 
 namespace Application.Features.Courses.Requests;
 
+public record EnrollTeacherInCourseRequest(int CourseId, int TeacherId) : IRequest<EnrollTeacherInCourseResponse>;
+
 public class EnrollTeacherInCourseRequestHandler(CollegeDbContext context) : IRequestHandler<EnrollTeacherInCourseRequest, EnrollTeacherInCourseResponse>
 {
     public async Task<EnrollTeacherInCourseResponse> Handle(EnrollTeacherInCourseRequest request, CancellationToken cancellationToken)

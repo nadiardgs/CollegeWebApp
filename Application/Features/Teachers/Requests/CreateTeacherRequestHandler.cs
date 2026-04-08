@@ -7,6 +7,8 @@ using MediatR;
 
 namespace Application.Features.Teachers.Requests;
 
+public record CreateTeacherRequest(string Name) : IRequest<CreateTeacherResponse>;
+
 public class CreateTeacherRequestHandler(CollegeDbContext context)
     : IRequestHandler<CreateTeacherRequest, CreateTeacherResponse>
 {
