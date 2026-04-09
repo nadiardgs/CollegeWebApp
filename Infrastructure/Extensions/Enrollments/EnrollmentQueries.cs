@@ -14,5 +14,7 @@ public static class EnrollmentQueries
                     e.CourseId == courseId, 
                 ct);
         }
+        
+        
     }
 }

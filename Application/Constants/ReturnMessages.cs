@@ -20,6 +20,9 @@ public static class ReturnMessages
     public static string AlreadyEnrolled(int studentId, int courseId)
         => $"Student {studentId} has already been enrolled in course {courseId}.";
     
+    public static string NotEnrolled(int studentId, int courseId)
+        => $"Student {studentId} is not enrolled in course {courseId} and therefore can't be graded.";
+    
     public static string GradeOutOfRange()
         => "Grades must be between 0 and 10.";
 }

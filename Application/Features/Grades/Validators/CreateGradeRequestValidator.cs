@@ -15,7 +15,8 @@ public class CreateGradeRequestValidator : AbstractValidator<CreateGradeRequest>
             .WithMessage(ReturnMessages.GradeOutOfRange());
 
         RuleFor(x => x)
-            .MustAsync((grade, ct) => context.Enrollments.IsEnrolledAsync(grade.StudentId, grade.CourseId, ct))
-            .WithMessage(request => ReturnMessages.AlreadyEnrolled(request.StudentId, request.CourseId));
+            .MustAsync((request, ct) => 
+                context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct))
+            .WithMessage(req => ReturnMessages.NotEnrolled(req.StudentId, req.CourseId));
     }
 }
