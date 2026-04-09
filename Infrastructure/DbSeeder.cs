@@ -11,10 +11,7 @@ public static class DbSeeder
 
         if (await context.Teachers.AnyAsync()) return;
 
-        var teacher = new Teacher 
-        {
-            Name = "Prof. Alan Turing" 
-        };
+        var teacher = new Teacher { Name = "Alan Turing" };
 
         var course = new Course
         {
@@ -22,44 +19,31 @@ public static class DbSeeder
             Teacher = teacher
         };
 
-        var student1 = new Student
-        {
-            Name = "John Smith"
-        };
-        
-        var student2 = new Student
-        {
-            Name = "Mary Smith"
-        };
-        
-        var grade1 = new Grade 
-        {
-            Value = 9.5m
-        };
-        
-        var grade2 = new Grade 
-        {
-            Value = 9.5m
-        };
-
+        var student1 = new Student { Name = "John Smith" };
+        var student2 = new Student { Name = "Mary Smith" };
+    
+        // 1. Link Enrollment to Objects, not IDs
         var enrollment1 = new Enrollment
         {
-            StudentId = student1.Id,
-            CourseId = course.Id
+            Student = student1,
+            Course = course
         };
 
         var enrollment2 = new Enrollment
         {
-            StudentId = student2.Id,
-            CourseId = course.Id
+            Student = student2,
+            Course = course
         };
+
+        var grade1 = new Grade { Value = 9.5m, Enrollment = enrollment1 };
+        var grade2 = new Grade { Value = 9.5m, Enrollment = enrollment2 };
         
         await context.Teachers.AddAsync(teacher);
         await context.Courses.AddAsync(course);
         await context.Students.AddRangeAsync(student1, student2);
-        await context.Grades.AddRangeAsync(grade1, grade2);
         await context.Enrollments.AddRangeAsync(enrollment1, enrollment2);
-        
+        await context.Grades.AddRangeAsync(grade1, grade2);
+    
         await context.SaveChangesAsync();
-    }
+    }                    
 }

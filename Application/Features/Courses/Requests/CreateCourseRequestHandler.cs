@@ -21,10 +21,6 @@ public class CreateCourseRequestHandler(CollegeDbContext context)
         context.Courses.Add(course);
         await context.SaveChangesAsync(ct);
         
-        var result = await context.Courses
-            .Include(g => g.Teacher)
-            .FirstAsync(g => g.Id == course.Id, ct);
-
-        return new CreateCourseResponse(result.Id, result.Title);
+        return new CreateCourseResponse(course.Id, course.Title);
     }
 }

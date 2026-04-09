@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Application.Features.Students.Responses;
