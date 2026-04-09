@@ -19,5 +19,4 @@ public class EnrollTeacherInCourseRequestValidator : AbstractValidator<EnrollTea
                 .MustAsync(async (id, ct) => await context.Teachers.AnyAsync(s => s.Id == id, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Teacher), request.TeacherId));
     }
-    
 }
