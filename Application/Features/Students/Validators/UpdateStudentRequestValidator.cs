@@ -7,18 +7,19 @@ using Infrastructure.Extensions.Students;
 
 namespace Application.Features.Students.Validators;
 
-public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequest>
+public class UpdateStudentRequestValidator : AbstractValidator<UpdateStudentRequest>
 {
-    public CreateStudentRequestValidator(CollegeDbContext dbContext)
+    public UpdateStudentRequestValidator(CollegeDbContext context)
     {
-        var context = dbContext;
-
+        RuleFor(x => x.Id)
+            .MustAsync((id, ct) => context.Students.StudentIdExistsAsync(id, ct))
+            .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.Id));
+        
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
             .WithMessage(ReturnMessages.MinLength(nameof(Student)))
-            .MustAsync((request, id, ct) => context.Students.IsNameUniqueAsync(request.Name, null, ct))
+            .MustAsync((request, id, ct) => context.Students.IsNameUniqueAsync(request.Name, request.Id, ct))
             .WithMessage(request => ReturnMessages.UniqueName(nameof(Student), request.Name));
     }
-    
 }

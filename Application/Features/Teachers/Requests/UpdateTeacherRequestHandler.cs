@@ -15,15 +15,17 @@ public class UpdateTeacherRequestHandler(CollegeDbContext context) : IRequestHan
             await context.Teachers.FirstOrDefaultAsync(s => s.Id == request.Id,
                 cancellationToken: cancellationToken)
             ?? throw new EntityNotFoundException(nameof(Teacher), request.Id);
+        
+        var newTeacher = new TeacherDto(
+            teacher.Id,
+            teacher.Name);
 
-        if (!teacher.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
-        {
-            teacher.Name = request.Name;
-            await context.SaveChangesAsync(cancellationToken);
-        }
+        if (teacher.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
+            return newTeacher;
+        
+        teacher.Name = request.Name;
+        await context.SaveChangesAsync(cancellationToken);
 
-        return new TeacherDto(
-                teacher.Id, 
-                teacher.Name);
+        return newTeacher;
     }
 }

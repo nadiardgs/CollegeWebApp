@@ -7,9 +7,10 @@ public static class StudentQueries
 {
     extension(IQueryable<Student> students)
     {
-        public Task<bool> IsNameUniqueAsync(string name, CancellationToken ct)
+        public async Task<bool> IsNameUniqueAsync(string name, int? excludeId, CancellationToken ct)
         {
-            return students.AllAsync(x => x.Name != name, ct);
+            return !await students.AnyAsync(s => 
+                s.Name == name && s.Id != excludeId, ct);
         }
 
         public Task<bool> StudentIdExistsAsync(int id, CancellationToken ct)
