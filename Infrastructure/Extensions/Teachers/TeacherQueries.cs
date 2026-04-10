@@ -5,8 +5,17 @@ namespace Infrastructure.Extensions.Teachers;
 
 public static class TeacherQueries
 {
-    public static Task<bool> IsNameUniqueAsync(this IQueryable<Teacher> students, string name, CancellationToken ct)
+    extension(IQueryable<Teacher> teachers)
     {
-        return students.AllAsync(x => x.Name != name, ct);
+        public async Task<bool> IsNameUniqueAsync(string name, int? excludeId, CancellationToken ct)
+        {
+            return !await teachers.AnyAsync(s => 
+                s.Name == name && s.Id != excludeId, ct);
+        }
+
+        public Task<bool> TeacherIdExistsAsync(int id, CancellationToken ct)
+        {
+            return teachers.AnyAsync(s => s.Id == id, ct);
+        }
     }
 }

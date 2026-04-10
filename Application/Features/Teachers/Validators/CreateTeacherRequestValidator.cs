@@ -19,7 +19,7 @@ public class CreateTeacherRequestValidator : AbstractValidator<CreateTeacherRequ
             .NotEmpty()
             .MinimumLength(3)
             .WithMessage(ReturnMessages.MinLength(nameof(Teacher)))
-            .MustAsync((name, ct) => context.Teachers.IsNameUniqueAsync(name, ct))
+            .MustAsync((request, id, ct) => context.Teachers.IsNameUniqueAsync(request.Name, null, ct))
             .WithMessage(request => ReturnMessages.UniqueName(nameof(Teacher), request.Name));
     }
 }
