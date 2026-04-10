@@ -1,5 +1,5 @@
-using Application.Features.Grades.Responses;
 using Application.Exceptions;
+using Application.Features.Grades.Responses;
 using Application.Features.Students.Responses;
 using Domain.Entities;
 using Infrastructure;

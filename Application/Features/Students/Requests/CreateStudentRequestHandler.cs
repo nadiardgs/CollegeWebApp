@@ -2,8 +2,8 @@ using Application.Exceptions;
 using Application.Features.Students.Responses;
 using Domain.Entities;
 using Infrastructure;
-using MediatR;
 using Infrastructure.Extensions.Students;
+using MediatR;
 
 namespace Application.Features.Students.Requests;
 
@@ -26,6 +26,4 @@ public class CreateStudentRequestHandler(CollegeDbContext context)
                 student.Id, 
                 student.Name);
     }
-
-
 }
