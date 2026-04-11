@@ -16,16 +16,16 @@ public class UpdateTeacherRequestHandler(CollegeDbContext context) : IRequestHan
                 cancellationToken: cancellationToken)
             ?? throw new EntityNotFoundException(nameof(Teacher), request.Id);
         
-        var newTeacher = new TeacherDto(
+        var teacherDto = new TeacherDto(
             teacher.Id,
             teacher.Name);
 
         if (teacher.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase))
-            return newTeacher;
+            return teacherDto;
         
         teacher.Name = request.Name;
         await context.SaveChangesAsync(cancellationToken);
 
-        return newTeacher;
+        return teacherDto;
     }
 }
