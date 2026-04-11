@@ -5,30 +5,28 @@ using FluentValidation;
 using Infrastructure;
 using Infrastructure.Extensions.Courses;
 using Infrastructure.Extensions.Enrollments;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions.Students;
 
 namespace Application.Features.Courses.Validators;
 
-public class CourseRequestValidator : AbstractValidator<EnrollStudentInCourseRequest>
+public class EnrollStudentInCourseRequestValidator : AbstractValidator<EnrollStudentInCourseRequest>
 {
-    public CourseRequestValidator(CollegeDbContext context)
+    public EnrollStudentInCourseRequestValidator(CollegeDbContext context)
     {
         RuleFor(request => request.CourseId)
-            .MustAsync(async (id, ct) 
-                => await context.Courses.AnyAsync(c => c.Id == id, ct))
+            .MustAsync((id, ct) => context.Courses.IdExistsAsync(id, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Course), request.CourseId));
         
         RuleFor(request => request.StudentId)
-            .MustAsync(async (id, ct) 
-                => await context.Students.AnyAsync(s => s.Id == id, ct))
-            .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.StudentId));
+            .MustAsync((id, ct) => context.Students.IdExistsAsync(id, ct))
+            .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.CourseId));
         
-        RuleFor(x => x)
+        RuleFor(request => request)
             .MustAsync(async (request, ct) => 
                 !await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct)) 
             .WithMessage(request => ReturnMessages.AlreadyEnrolled(request.StudentId, request.CourseId));
         
-        RuleFor(x => x.CourseId)
+        RuleFor(request => request.CourseId)
             .MustAsync((courseId, ct) => context.Courses.HasTeacherAssignedAsync(courseId, ct))
             .WithMessage(request => ReturnMessages.NoTeacherAssigned(request.CourseId));
     }

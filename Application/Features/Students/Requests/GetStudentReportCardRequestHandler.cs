@@ -16,7 +16,7 @@ public class GetStudentReportCardRequestHandler(CollegeDbContext context)
 {
     public async Task<GetStudentReportCardResponse> Handle(GetStudentReportCardRequest request, CancellationToken ct)
     {
-        var exists = await context.Students.StudentIdExistsAsync(request.StudentId, ct);
+        var exists = await context.Students.IdExistsAsync(request.StudentId, ct);
         if (!exists) throw new EntityNotFoundException(nameof(Student),  request.StudentId);
         
         var reportCard = await context.Students

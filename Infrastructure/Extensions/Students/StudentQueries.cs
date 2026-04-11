@@ -13,7 +13,7 @@ public static class StudentQueries
                 s.Name == name && s.Id != excludeId, ct);
         }
 
-        public Task<bool> StudentIdExistsAsync(int id, CancellationToken ct)
+        public Task<bool> IdExistsAsync(int id, CancellationToken ct)
         {
             return students.AnyAsync(s => s.Id == id, ct);
         }

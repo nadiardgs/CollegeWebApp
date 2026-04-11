@@ -12,7 +12,7 @@ public class GetStudentReportCardValidator : AbstractValidator<GetStudentReportC
     public GetStudentReportCardValidator(CollegeDbContext context)
     {
         RuleFor(x => x.StudentId)
-            .MustAsync((id, ct) => context.Students.StudentIdExistsAsync(id, ct))
+            .MustAsync((id, ct) => context.Students.IdExistsAsync(id, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.StudentId));
     }
 }

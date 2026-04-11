@@ -14,7 +14,10 @@ public static class CourseQueries
                      c.TeacherId != null 
                      && c.TeacherId != 0, ct);
         }
-        
-        
+
+        public async Task<bool> IdExistsAsync(int courseId, CancellationToken ct)
+        {
+            return await courses.AnyAsync(c => c.Id == courseId, ct);
+        }
     }
 }

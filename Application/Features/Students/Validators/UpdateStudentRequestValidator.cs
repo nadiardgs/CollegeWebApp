@@ -12,7 +12,7 @@ public class UpdateStudentRequestValidator : AbstractValidator<UpdateStudentRequ
     public UpdateStudentRequestValidator(CollegeDbContext context)
     {
         RuleFor(x => x.Id)
-            .MustAsync((id, ct) => context.Students.StudentIdExistsAsync(id, ct))
+            .MustAsync((id, ct) => context.Students.IdExistsAsync(id, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.Id));
         
         RuleFor(x => x.Name)
