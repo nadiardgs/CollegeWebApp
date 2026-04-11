@@ -25,4 +25,7 @@ public static class ReturnMessages
     
     public static string GradeOutOfRange()
         => "Grades must be between 0 and 10.";
+    
+    public static string NoTeacherAssigned(int courseId)
+    => $"Course  {courseId} has no teacher assigned and therefore no student can be enrolled.";
 }

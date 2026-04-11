@@ -3,6 +3,7 @@ using Application.Features.Courses.Requests;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
+using Infrastructure.Extensions.Courses;
 using Infrastructure.Extensions.Enrollments;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,5 +27,9 @@ public class CourseRequestValidator : AbstractValidator<EnrollStudentInCourseReq
             .MustAsync(async (request, ct) => 
                 !await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct)) 
             .WithMessage(request => ReturnMessages.AlreadyEnrolled(request.StudentId, request.CourseId));
+        
+        RuleFor(x => x.CourseId)
+            .MustAsync((courseId, ct) => context.Courses.HasTeacherAssignedAsync(courseId, ct))
+            .WithMessage(request => ReturnMessages.NoTeacherAssigned(request.CourseId));
     }
 }

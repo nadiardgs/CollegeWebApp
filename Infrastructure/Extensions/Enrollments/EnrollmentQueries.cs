@@ -15,6 +15,13 @@ public static class EnrollmentQueries
                 ct);
         }
         
-        
+        public async Task<Enrollment?> GetByStudentAndCourseAsync(
+            int studentId, 
+            int courseId, 
+            CancellationToken ct)
+        {
+            return await enrollments.FirstOrDefaultAsync(e => 
+                e.StudentId == studentId && e.CourseId == courseId, ct);
+        }
     }
 }
