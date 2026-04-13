@@ -19,7 +19,7 @@ public class EnrollStudentInCourseRequestValidator : AbstractValidator<EnrollStu
         
         RuleFor(request => request.StudentId)
             .MustAsync((id, ct) => context.Students.IdExistsAsync(id, ct))
-            .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.CourseId));
+            .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.StudentId));
         
         RuleFor(request => request)
             .MustAsync(async (request, ct) => 
