@@ -56,6 +56,7 @@ public class EnrollStudentInCourseRequestValidatorTests : ValidatorTestBase
         
         // Assert
         Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -101,6 +102,7 @@ public class EnrollStudentInCourseRequestValidatorTests : ValidatorTestBase
 
         // Assert
         Assert.False(result.IsValid);
+        Assert.Equal(2, result.Errors.Count);
         Assert.Contains(result.Errors,
             e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Course), _invalidCourse.Id));
         Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.NoTeacherAssigned(_invalidCourse.Id)); 
@@ -125,6 +127,7 @@ public class EnrollStudentInCourseRequestValidatorTests : ValidatorTestBase
 
         // Assert
         Assert.False(result.IsValid);
+        Assert.Single(result.Errors);
         Assert.Contains(result.Errors,
             e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Student), _validStudent.Id));
     }
@@ -147,6 +150,7 @@ public class EnrollStudentInCourseRequestValidatorTests : ValidatorTestBase
     
         // Assert
         Assert.False(result.IsValid);
+        Assert.Single(result.Errors);
         Assert.Contains(result.Errors, e => 
             e.ErrorMessage == ReturnMessages.AlreadyEnrolled(_validStudent.Id, _validCourse.Id));
     }
