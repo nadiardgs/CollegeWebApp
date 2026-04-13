@@ -120,7 +120,7 @@ public class EnrollStudentInCourseRequestValidatorTests : ValidatorTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(CourseId: _validCourse.Id, StudentId: _validStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(_validCourse.Id, _validStudent.Id);
 
         // Act
         var result = await _enrollStudentInCourseRequestValidator.ValidateAsync(enrollmentRequest);

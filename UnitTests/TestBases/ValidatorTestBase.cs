@@ -13,11 +13,11 @@ public abstract class ValidatorTestBase : IAsyncDisposable
     {
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
-        
+    
         var options = new DbContextOptionsBuilder<CollegeDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseSqlite(_connection)
             .Options;
-        
+    
         Context = new CollegeDbContext(options);
         Context.Database.EnsureCreated();
     }
