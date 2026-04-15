@@ -21,8 +21,8 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id, 
-            ValidStudent.Name);
+            ValidStudent1.Id, 
+            ValidStudent1.Name);
             
         SeedCourseWithTeacher(
             ValidCourse.Id, 
@@ -32,14 +32,14 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
             
         await Context.SaveChangesAsync();
 
-        var enrollment = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollment = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
         
         // Act
         var result = await _handler.Handle(enrollment, CancellationToken.None);
         
         // Assert
-        Assert.Equal(ValidStudent.Id, result.StudentId);
-        Assert.Equal(ValidStudent.Name, result.StudentName);
+        Assert.Equal(ValidStudent1.Id, result.StudentId);
+        Assert.Equal(ValidStudent1.Name, result.StudentName);
         Assert.Equal(ValidCourse.Id, result.CourseId);
         Assert.Equal(ValidCourse.Title, result.CourseTitle);
         Assert.Equal(1, await Context.Enrollments.CountAsync());
@@ -50,8 +50,8 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id,
-            ValidStudent.Name);
+            ValidStudent1.Id,
+            ValidStudent1.Name);
         
         SeedCourse(
             ValidCourse.Id,
@@ -59,7 +59,7 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
         
         // Act
         var result = await Assert.ThrowsAsync<NoTeacherAssignedException>(() => 
@@ -75,8 +75,8 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id,
-            ValidStudent.Name);
+            ValidStudent1.Id,
+            ValidStudent1.Name);
 
         SeedTeacher(
             ValidTeacher.Id,
@@ -84,7 +84,7 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
         
         // Act
         var result = await Assert.ThrowsAsync<EntityNotFoundException>(() 
@@ -107,13 +107,13 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
 
         // Act
         var result = await Assert.ThrowsAsync<EntityNotFoundException>(() => 
             _handler.Handle(enrollmentRequest, CancellationToken.None));
         
-        Assert.Equal(result.Message, ReturnMessages.EntityNotFound(nameof(Student),  ValidStudent.Id));
+        Assert.Equal(result.Message, ReturnMessages.EntityNotFound(nameof(Student),  ValidStudent1.Id));
         Assert.False(Context.Enrollments.Any());
     }
 
@@ -122,8 +122,8 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id, 
-            ValidStudent.Name);
+            ValidStudent1.Id, 
+            ValidStudent1.Name);
         
         SeedCourseWithTeacher(
             ValidCourse.Id, 
@@ -132,19 +132,19 @@ public class EnrollStudentInCourseHandlerTests : StudentTestBase
             ValidTeacher.Name);
     
         SeedEnrollment(
-            ValidStudent.Id, 
+            ValidStudent1.Id, 
             ValidCourse.Id);
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
     
         // Act
         var result = await Assert.ThrowsAsync<StudentAlreadyEnrolledException>(() =>
             _handler.Handle(enrollmentRequest, CancellationToken.None));
         
         // Assert
-        Assert.Equal(result.Message, ReturnMessages.AlreadyEnrolled(ValidStudent.Id, ValidCourse.Id));
+        Assert.Equal(result.Message, ReturnMessages.AlreadyEnrolled(ValidStudent1.Id, ValidCourse.Id));
         Assert.Equal(1, await Context.Enrollments.CountAsync());
     }
 }

@@ -1,41 +1,21 @@
 using Application.Constants;
 using Application.Features.Students.Requests;
-using Application.Features.Students.Responses;
 using Application.Features.Students.Validators;
 using Domain.Entities;
-using Infrastructure;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using UnitTests.TestBases.Students;
 
 namespace UnitTests.Features.Students.Validators;
 
-public class UpdateStudentRequestValidatorTests : IAsyncDisposable
+public class UpdateStudentRequestValidatorTests : StudentTestBase
 {
     private readonly UpdateStudentRequestValidator _updateStudentRequestValidator;
-    private readonly StudentDto _validStudent1;
-    private readonly StudentDto _validStudent2;
-    private readonly CollegeDbContext _context;
     private readonly Student _student;
-    private readonly SqliteConnection _connection;
 
     public UpdateStudentRequestValidatorTests()
     {
-        _validStudent1 = new StudentDto(1, "John Doe");
-        _validStudent2 = new StudentDto(2, "Mary Doe");
-
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-
-        var options = new DbContextOptionsBuilder<CollegeDbContext>()
-            .UseSqlite(_connection)
-            .Options;
-
-        _context = new CollegeDbContext(options);
-        _context.Database.EnsureCreated();
+        _updateStudentRequestValidator = new UpdateStudentRequestValidator(Context);
         
-        _updateStudentRequestValidator = new UpdateStudentRequestValidator(_context);
-        
-        _student = new Student { Name = _validStudent1.Name };
+        _student = new Student { Name = ValidStudent1.Name };
     }
     
     [Theory]
@@ -44,8 +24,8 @@ public class UpdateStudentRequestValidatorTests : IAsyncDisposable
     public async Task Validator_ShouldHaveError_WhenNameIsTooShort(string shortName)
     {
         // Arrange
-        _context.Students.Add(_student);
-        await _context.SaveChangesAsync();
+        Context.Students.Add(_student);
+        await Context.SaveChangesAsync();
         
         var request = new UpdateStudentRequest
         {
@@ -67,8 +47,8 @@ public class UpdateStudentRequestValidatorTests : IAsyncDisposable
         // Arrange
         var request = new UpdateStudentRequest
         {
-            Id = _validStudent1.Id,
-            Name = _validStudent1.Name
+            Id = ValidStudent1.Id,
+            Name = ValidStudent1.Name
         };
         
         // Act
@@ -76,21 +56,21 @@ public class UpdateStudentRequestValidatorTests : IAsyncDisposable
         
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Student), _validStudent1.Id));
+        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Student), ValidStudent1.Id));
     }
     
     [Fact]
     public async Task Validator_ShouldBeValid_WhenNameIsTheSameAsExistingStudent()
     {
         // Arrange
-        var existingStudent = new Student { Name = _validStudent1.Name };
-        _context.Students.Add(existingStudent);
-        await _context.SaveChangesAsync();
+        var existingStudent = new Student { Name = ValidStudent1.Name };
+        Context.Students.Add(existingStudent);
+        await Context.SaveChangesAsync();
 
         var request = new UpdateStudentRequest
         {
             Id = existingStudent.Id,
-            Name = _validStudent1.Name
+            Name = ValidStudent1.Name
         };
 
         // Act
@@ -104,13 +84,13 @@ public class UpdateStudentRequestValidatorTests : IAsyncDisposable
     public async Task Validator_ShouldBeValid_WhenNameIsLongEnough()
     {
         // Arrange
-        _context.Students.Add(_student);
-        await _context.SaveChangesAsync();
+        Context.Students.Add(_student);
+        await Context.SaveChangesAsync();
         
         var request = new UpdateStudentRequest
         {
             Id = _student.Id,
-            Name = _validStudent2.Name
+            Name = ValidStudent2.Name
         };
 
         // Act
@@ -123,14 +103,14 @@ public class UpdateStudentRequestValidatorTests : IAsyncDisposable
     [Fact]
     public async Task Validator_ShouldBeInvalid_WhenNameIsNotUnique()
     {
-        var existingStudent = new Student { Name = _validStudent1.Name };
-        _context.Students.Add(existingStudent);
-        await _context.SaveChangesAsync();
+        var existingStudent = new Student { Name = ValidStudent1.Name };
+        Context.Students.Add(existingStudent);
+        await Context.SaveChangesAsync();
 
         var request = new UpdateStudentRequest
         {
-            Id = _validStudent2.Id,
-            Name = _validStudent1.Name
+            Id = ValidStudent2.Id,
+            Name = ValidStudent1.Name
         };
 
         // Act
@@ -139,11 +119,5 @@ public class UpdateStudentRequestValidatorTests : IAsyncDisposable
         // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Student), existingStudent.Name));
-    }
-    
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-        await _connection.DisposeAsync();
     }
 }

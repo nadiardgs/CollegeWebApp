@@ -20,8 +20,8 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id, 
-            ValidStudent.Name);
+            ValidStudent1.Id, 
+            ValidStudent1.Name);
         
         SeedCourseWithTeacher(
             ValidCourse.Id,
@@ -31,7 +31,7 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
         
         // Act
         var result = await _enrollStudentInCourseRequestValidator.ValidateAsync(enrollmentRequest);
@@ -46,8 +46,8 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id, 
-            ValidStudent.Name);
+            ValidStudent1.Id, 
+            ValidStudent1.Name);
         
         SeedCourse(
             ValidCourse.Id,
@@ -55,7 +55,7 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
         
         // Act
         var result = await _enrollStudentInCourseRequestValidator.ValidateAsync(enrollmentRequest);
@@ -70,8 +70,8 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id,
-            ValidStudent.Name);
+            ValidStudent1.Id,
+            ValidStudent1.Name);
 
         SeedTeacher(
             ValidTeacher.Id,
@@ -79,7 +79,7 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
 
         // Act
         var result = await _enrollStudentInCourseRequestValidator.ValidateAsync(enrollmentRequest);
@@ -104,7 +104,7 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
 
         // Act
         var result = await _enrollStudentInCourseRequestValidator.ValidateAsync(enrollmentRequest);
@@ -113,7 +113,7 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
         Assert.False(result.IsValid);
         Assert.Single(result.Errors);
         Assert.Contains(result.Errors,
-            e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Student), ValidStudent.Id));
+            e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Student), ValidStudent1.Id));
     }
     
     [Fact]
@@ -121,8 +121,8 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
     {
         // Arrange
         SeedStudent(
-            ValidStudent.Id, 
-            ValidStudent.Name);
+            ValidStudent1.Id, 
+            ValidStudent1.Name);
         
         SeedCourseWithTeacher(
             ValidCourse.Id, 
@@ -131,12 +131,12 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
             ValidTeacher.Name);
     
         SeedEnrollment(
-            ValidStudent.Id, 
+            ValidStudent1.Id, 
             ValidCourse.Id);
 
         await Context.SaveChangesAsync();
 
-        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent.Id);
+        var enrollmentRequest = new EnrollStudentInCourseRequest(ValidCourse.Id, ValidStudent1.Id);
     
         // Act
         var result = await _enrollStudentInCourseRequestValidator.ValidateAsync(enrollmentRequest);
@@ -145,6 +145,6 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
         Assert.False(result.IsValid);
         Assert.Single(result.Errors);
         Assert.Contains(result.Errors, e => 
-            e.ErrorMessage == ReturnMessages.AlreadyEnrolled(ValidStudent.Id, ValidCourse.Id));
+            e.ErrorMessage == ReturnMessages.AlreadyEnrolled(ValidStudent1.Id, ValidCourse.Id));
     }
 }

@@ -1,38 +1,29 @@
 using Application.Constants;
 using Application.Exceptions;
 using Application.Features.Students.Requests;
-using Application.Features.Students.Responses;
 using Domain.Entities;
-using Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using UnitTests.TestBases.Students;
 
 namespace UnitTests.Features.Students.Handlers;
 
-public class GetStudentByIdHandlerTests : IAsyncDisposable
+public class GetStudentByIdHandlerTests : StudentTestBase
 {
-    private readonly CollegeDbContext _context;
     private readonly GetStudentByIdRequestHandler _handler;
-    private readonly StudentDto _studentRequest;
     
     public GetStudentByIdHandlerTests()
     {
-        var options = new DbContextOptionsBuilder<CollegeDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        
-        _context = new CollegeDbContext(options);
-        _handler = new GetStudentByIdRequestHandler(_context);
-        
-        _studentRequest = new StudentDto(1, "Mary Smith");
+        _handler = new GetStudentByIdRequestHandler(Context);
     }
     
     [Fact]
     public async Task Handle_ShouldReturnStudent_WhenExists()
     {
         // Arrange
-        var student = new Student { Name = _studentRequest.Name };
-        _context.Students.Add(student);
-        await _context.SaveChangesAsync(); 
+        var student = new Student { Name = ValidStudent1.Name };
+        
+        Context.Students.Add(student);
+        
+        await Context.SaveChangesAsync(); 
 
         var query = new GetStudentByIdRequest(student.Id);
 
@@ -41,14 +32,14 @@ public class GetStudentByIdHandlerTests : IAsyncDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(_studentRequest.Name, result.Name);
+        Assert.Equal(ValidStudent1.Name, result.Name);
     }
     
     [Fact]
     public async Task Handle_Should_NotGetStudent_WhenDoesntExist()
     {
         // Arrange
-        var request = new GetStudentByIdRequest(_studentRequest.Id);
+        var request = new GetStudentByIdRequest(ValidStudent1.Id);
 
         // Act
         var result = await Assert.ThrowsAsync<EntityNotFoundException>(() =>
@@ -57,10 +48,5 @@ public class GetStudentByIdHandlerTests : IAsyncDisposable
         // Assert
         Assert.Empty(result.Data);
         Assert.Equal(ReturnMessages.EntityNotFound(nameof(Student), request.Id), result.Message); 
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
     }
 }

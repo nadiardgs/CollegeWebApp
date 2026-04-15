@@ -9,7 +9,8 @@ namespace UnitTests.TestBases.Students;
 public class StudentTestBase : SqliteTestBase
 {
     protected readonly FakeTimeProvider TimeProvider = new();
-    protected readonly StudentDto ValidStudent = new(1, "John Doe Student");
+    protected readonly StudentDto ValidStudent1 = new(1, "John Doe Student");
+    protected readonly StudentDto ValidStudent2 = new(2, "Jane Doe Student");
     protected readonly CourseDto ValidCourse = new(1, "Test Course");
     protected readonly TeacherDto ValidTeacher = new(1, "John Doe Teacher");
 
