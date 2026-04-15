@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UnitTests.TestBases;
 
-public abstract class ValidatorTestBase : IAsyncDisposable
+public abstract class SqliteTestBase : IAsyncDisposable
 {
     protected readonly CollegeDbContext Context;
     private readonly SqliteConnection _connection;
 
-    protected ValidatorTestBase()
+    protected SqliteTestBase()
     {
         _connection = new SqliteConnection("DataSource=:memory:");
         _connection.Open();
@@ -25,6 +25,7 @@ public abstract class ValidatorTestBase : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await Context.DisposeAsync();
+        await Context.Database.EnsureDeletedAsync();
         await _connection.DisposeAsync();
         await _connection.CloseAsync();
     }

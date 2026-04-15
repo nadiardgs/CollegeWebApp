@@ -10,7 +10,7 @@ using UnitTests.TestBases;
 
 namespace UnitTests.Features.Courses.Validators;
 
-public class EnrollStudentInCourseRequestValidatorTests : ValidatorTestBase
+public class EnrollStudentInCourseRequestValidatorTests : SqliteTestBase
 {
     private readonly EnrollStudentInCourseRequestValidator _enrollStudentInCourseRequestValidator;
     private readonly StudentDto _validStudent;

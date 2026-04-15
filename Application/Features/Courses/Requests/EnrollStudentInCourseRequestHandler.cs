@@ -2,33 +2,30 @@ using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Domain.Entities;
 using Infrastructure;
+using Infrastructure.Extensions.Courses;
+using Infrastructure.Extensions.Enrollments;
+using Infrastructure.Extensions.Students;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
-public record EnrollStudentInCourseRequest (int CourseId, int StudentId) : IRequest<EnrollStudentInCourseResponse>;
+public record EnrollStudentInCourseRequest (int CourseId, int StudentId) : IRequest<StudentEnrollmentDto>;
 
-public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRequestHandler<EnrollStudentInCourseRequest, EnrollStudentInCourseResponse>
+public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRequestHandler<EnrollStudentInCourseRequest, StudentEnrollmentDto>
 {
-    public async Task<EnrollStudentInCourseResponse> Handle(EnrollStudentInCourseRequest request, CancellationToken cancellationToken)
+    public async Task<StudentEnrollmentDto> Handle(EnrollStudentInCourseRequest request, CancellationToken cancellationToken)
     {
-        var courseExists = await context.Courses.AnyAsync(c => c.Id == request.CourseId, cancellationToken);
+        var courseExists = await context.Courses.IdExistsAsync(request.CourseId, cancellationToken);
         if (!courseExists) 
             throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
-        var studentExists = await context.Students.AnyAsync(s => s.Id == request.StudentId, cancellationToken);
+        var studentExists = await context.Students.IdExistsAsync(request.StudentId, cancellationToken);
         if (!studentExists) 
             throw new EntityNotFoundException(nameof(Student), request.StudentId);
 
-        var alreadyEnrolled = await context.Enrollments.AnyAsync(e => 
-                e.StudentId == request.StudentId && e.CourseId == request.CourseId, 
-            cancellationToken);
-
+        var alreadyEnrolled = await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, cancellationToken);
         if (alreadyEnrolled) 
-        {
-            return new EnrollStudentInCourseResponse(true);
-        }
+            throw new StudentAlreadyEnrolledException(request.StudentId, request.CourseId);
 
         var enrollment = new Enrollment
         {
@@ -40,6 +37,13 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
         context.Enrollments.Add(enrollment);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new EnrollStudentInCourseResponse(true);
+        var result = new StudentEnrollmentDto(
+            enrollment.Id,
+            enrollment.Student.Id,
+            enrollment.Student.Name,
+            enrollment.Course.Id,
+            enrollment.Course.Title);
+
+        return result;
     }
 }
