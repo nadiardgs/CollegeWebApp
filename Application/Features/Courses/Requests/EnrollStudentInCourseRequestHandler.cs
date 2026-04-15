@@ -24,8 +24,12 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
             throw new EntityNotFoundException(nameof(Student), request.StudentId);
 
         var alreadyEnrolled = await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, cancellationToken);
-        if (alreadyEnrolled) 
+        if (alreadyEnrolled)
             throw new StudentAlreadyEnrolledException(request.StudentId, request.CourseId);
+        
+        var noTeacherAssigned = await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken);
+        if (!noTeacherAssigned)
+            throw new NoTeacherAssignedException(request.CourseId);
 
         var enrollment = new Enrollment
         {
