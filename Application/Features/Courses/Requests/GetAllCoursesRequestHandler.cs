@@ -1,5 +1,6 @@
+using Application.Constants;
 using Application.Features.Courses.Responses;
-using Application.Exceptions;
+using Application.Models;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -7,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
-public record GetAllCoursesRequest : IRequest<IEnumerable<CourseDto>>;
+public record GetAllCoursesRequest : IRequest<ApiResult<IEnumerable<CourseDto>>>;
 
-public class GetAllCoursesRequestHandler(CollegeDbContext context) : IRequestHandler<GetAllCoursesRequest, IEnumerable<CourseDto>>
+public class GetAllCoursesRequestHandler(CollegeDbContext context) : IRequestHandler<GetAllCoursesRequest, ApiResult<IEnumerable<CourseDto>>>
 {
-    public async Task<IEnumerable<CourseDto>> Handle(GetAllCoursesRequest request, CancellationToken cancellationToken)
+    public async Task<ApiResult<IEnumerable<CourseDto>>> Handle(GetAllCoursesRequest request, CancellationToken cancellationToken)
     {
         var result = await context.Courses
             .AsNoTracking()
@@ -20,6 +21,10 @@ public class GetAllCoursesRequestHandler(CollegeDbContext context) : IRequestHan
                 c.Title))
             .ToListAsync(cancellationToken);
         
-        return result ?? throw new CollectionNotFoundException(nameof(Course));
+        var message = result.Count != 0
+            ? ReturnMessages.Success(result.Count, nameof(Course)) 
+            : ReturnMessages.CollectionNotFound(nameof(CourseDto));
+
+        return new ApiResult<IEnumerable<CourseDto>>(result, message);
     }
 }

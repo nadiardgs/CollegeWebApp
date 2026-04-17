@@ -136,7 +136,7 @@ public class StudentsControllerTests
         
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<UpdateStudentRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((UpdateStudentRequest req, CancellationToken ct) => 
+            .ReturnsAsync((UpdateStudentRequest req) => 
                 new StudentDto(1, req.Name));
         // Act
         var result = await _controller.Update(studentId, updateRequest);
