@@ -9,13 +9,13 @@ public static class StudentQueries
     {
         public async Task<bool> IsNameUniqueAsync(string name, int? excludeId, CancellationToken ct)
         {
-            return !await students.AnyAsync(s => 
+            return await students.AsNoTracking().AnyAsync(s => 
                 s.Name == name && s.Id != excludeId, ct);
         }
 
-        public Task<bool> IdExistsAsync(int id, CancellationToken ct)
+        public async Task<bool> IdExistsAsync(int id, CancellationToken ct)
         {
-            return students.AnyAsync(s => s.Id == id, ct);
+            return await students.AsNoTracking().AnyAsync(s => s.Id == id, ct);
         }
     }
 }

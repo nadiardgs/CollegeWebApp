@@ -14,16 +14,15 @@ public class EnrollStudentInCourseRequestValidator : AbstractValidator<EnrollStu
     public EnrollStudentInCourseRequestValidator(CollegeDbContext context)
     {
         RuleFor(request => request.CourseId)
-            .MustAsync((id, ct) => context.Courses.IdExistsAsync(id, ct))
+            .MustAsync((courseId, ct) => context.Courses.IdExistsAsync(courseId, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Course), request.CourseId));
         
         RuleFor(request => request.StudentId)
-            .MustAsync((id, ct) => context.Students.IdExistsAsync(id, ct))
+            .MustAsync((studentId, ct) => context.Students.IdExistsAsync(studentId, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.StudentId));
         
         RuleFor(request => request)
-            .MustAsync(async (request, ct) => 
-                !await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct)) 
+            .MustAsync((request, ct) => context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct)) 
             .WithMessage(request => ReturnMessages.AlreadyEnrolled(request.StudentId, request.CourseId));
         
         RuleFor(request => request.CourseId)

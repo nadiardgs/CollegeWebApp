@@ -27,8 +27,8 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
         if (alreadyEnrolled)
             throw new StudentAlreadyEnrolledException(request.StudentId, request.CourseId);
         
-        var noTeacherAssigned = await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken);
-        if (!noTeacherAssigned)
+        var hasTeacherAssigned = await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken);
+        if (!hasTeacherAssigned)
             throw new NoTeacherAssignedException(request.CourseId);
 
         var enrollment = new Enrollment

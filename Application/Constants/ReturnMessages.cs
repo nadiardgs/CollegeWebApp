@@ -27,5 +27,8 @@ public static class ReturnMessages
         => "Grades must be between 0 and 10.";
     
     public static string NoTeacherAssigned(int courseId)
-    => $"Course {courseId} has no teacher assigned and therefore no student can be enrolled.";
+        => $"Course {courseId} has no teacher assigned and therefore no student can be enrolled.";
+    
+    public static string TeacherAlreadyAssigned(int courseId)
+        => $"Course {courseId} already has a teacher assigned to it.";
 }

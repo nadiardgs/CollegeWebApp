@@ -3,7 +3,8 @@ using Application.Features.Courses.Requests;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions.Courses;
+using Infrastructure.Extensions.Teachers;
 
 namespace Application.Features.Courses.Validators;
 
@@ -12,11 +13,15 @@ public class EnrollTeacherInCourseRequestValidator : AbstractValidator<EnrollTea
     public EnrollTeacherInCourseRequestValidator(CollegeDbContext context)
     {
         RuleFor(request => request.CourseId)
-                .MustAsync(async (id, ct) => await context.Courses.AnyAsync(c => c.Id == id, ct))
+            .MustAsync((courseId, ct) =>  context.Courses.IdExistsAsync(courseId, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Course), request.CourseId));
                 
-            RuleFor(request => request.TeacherId)
-                .MustAsync(async (id, ct) => await context.Teachers.AnyAsync(s => s.Id == id, ct))
+        RuleFor(request => request.TeacherId)
+            .MustAsync((teacherId, ct) => context.Teachers.IdExistsAsync(teacherId, ct))
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Teacher), request.TeacherId));
+        
+        RuleFor(request => request.CourseId)
+            .MustAsync(async (courseId, ct) => !await context.Courses.HasTeacherAssignedAsync(courseId, ct))
+            .WithMessage(request => ReturnMessages.TeacherAlreadyAssigned(request.CourseId));
     }
 }

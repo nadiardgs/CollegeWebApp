@@ -2,6 +2,7 @@ using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Domain.Entities;
 using Infrastructure;
+using Infrastructure.Extensions.Courses;
 using MediatR;
 
 namespace Application.Features.Courses.Requests;
@@ -12,7 +13,11 @@ public class EnrollTeacherInCourseRequestHandler(CollegeDbContext context) : IRe
 {
     public async Task<EnrollTeacherInCourseResponse> Handle(EnrollTeacherInCourseRequest request, CancellationToken cancellationToken)
     {
-        var course = await context.Courses.FindAsync([request.CourseId], cancellationToken)
+        var teacherAssigned = await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken);
+        if (teacherAssigned)
+                throw new TeacherAlreadyAssignedException(request.CourseId);
+        
+        var course = await context.Courses.FindAsync([request.CourseId], cancellationToken) 
                      ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
         if (course.TeacherId == request.TeacherId) 

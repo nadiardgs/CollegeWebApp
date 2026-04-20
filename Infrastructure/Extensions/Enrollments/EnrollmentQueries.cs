@@ -9,7 +9,7 @@ public static class EnrollmentQueries
     {
         public async Task<bool> IsEnrolledAsync(int studentId, int courseId, CancellationToken ct)
         {
-            return await enrollments.AnyAsync(e => 
+            return await enrollments.AsNoTracking().AnyAsync(e => 
                     e.StudentId == studentId && 
                     e.CourseId == courseId, 
                 ct);
@@ -20,7 +20,7 @@ public static class EnrollmentQueries
             int courseId, 
             CancellationToken ct)
         {
-            return await enrollments.FirstOrDefaultAsync(e => 
+            return await enrollments.AsNoTracking().FirstOrDefaultAsync(e => 
                 e.StudentId == studentId && e.CourseId == courseId, ct);
         }
     }

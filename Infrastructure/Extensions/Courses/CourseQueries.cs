@@ -9,7 +9,7 @@ public static class CourseQueries
     {
         public async Task<bool> HasTeacherAssignedAsync(int courseId, CancellationToken ct)
         {
-            return await courses.AnyAsync(
+            return await courses.AsNoTracking().AnyAsync(
                 c => c.Id == courseId && 
                      c.TeacherId != null 
                      && c.TeacherId != 0, ct);
@@ -17,7 +17,7 @@ public static class CourseQueries
 
         public async Task<bool> IdExistsAsync(int courseId, CancellationToken ct)
         {
-            return await courses.AnyAsync(c => c.Id == courseId, ct);
+            return await courses.AsNoTracking().AnyAsync(c => c.Id == courseId, ct);
         }
     }
 }
