@@ -2,8 +2,8 @@ using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Domain.Entities;
 using Infrastructure;
-using Infrastructure.Extensions.Courses;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
@@ -13,20 +13,25 @@ public class EnrollTeacherInCourseRequestHandler(CollegeDbContext context) : IRe
 {
     public async Task<EnrollTeacherInCourseResponse> Handle(EnrollTeacherInCourseRequest request, CancellationToken cancellationToken)
     {
-        var teacherAssigned = await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken);
-        if (teacherAssigned)
-                throw new TeacherAlreadyAssignedException(request.CourseId);
-        
-        var course = await context.Courses.FindAsync([request.CourseId], cancellationToken) 
-                     ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
+        var course = await context.Courses
+            .FirstOrDefaultAsync(c => c.Id == request.CourseId, cancellationToken) 
+            ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
 
-        if (course.TeacherId == request.TeacherId) 
+        if (course.TeacherId == request.TeacherId)
             return new EnrollTeacherInCourseResponse(true);
-
-        course.TeacherId = request.TeacherId;
-
-        await context.SaveChangesAsync(cancellationToken);
         
+        if (course.TeacherId != null)
+            throw new TeacherAlreadyAssignedException(request.CourseId);
+        
+        var teacherExists = await context.Teachers
+            .AnyAsync(t => t.Id == request.TeacherId, cancellationToken);
+
+        if (!teacherExists)
+            throw new EntityNotFoundException(nameof(Teacher), request.TeacherId);
+        
+        course.TeacherId = request.TeacherId;
+        await context.SaveChangesAsync(cancellationToken);
+    
         return new EnrollTeacherInCourseResponse(true);
     }
 }

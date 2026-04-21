@@ -24,13 +24,13 @@ public class EnrollTeacherInCourseRequestValidatorTests : TeacherTestBase
             ValidCourse.Title);
         
         SeedTeacher(
-            ValidTeacher.Id, 
-            ValidTeacher.Name);
+            ValidTeacher1.Id, 
+            ValidTeacher1.Name);
         
         await Context.SaveChangesAsync();
         
         // Act
-        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher.Id);
+        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher1.Id);
         
         // Act
         var result = await _enrollTeacherInCourseRequestValidator.ValidateAsync(enrollmentRequest, CancellationToken.None);
@@ -47,13 +47,13 @@ public class EnrollTeacherInCourseRequestValidatorTests : TeacherTestBase
         SeedCourseWithTeacher(
             ValidCourse.Id,
             ValidCourse.Title,
-            ValidTeacher.Id,
-            ValidTeacher.Name);
+            ValidTeacher1.Id,
+            ValidTeacher1.Name);
         
         await Context.SaveChangesAsync();
         
         // Act
-        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher.Id);
+        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher1.Id);
 
         var result = await _enrollTeacherInCourseRequestValidator.ValidateAsync(enrollmentRequest, CancellationToken.None);
         
@@ -64,17 +64,17 @@ public class EnrollTeacherInCourseRequestValidatorTests : TeacherTestBase
     }
 
     [Fact]
-    public async Task Validator_ShouldBeInvalid_WhenCourseDoesExist()
+    public async Task Validator_ShouldBeInvalid_WhenCourseDoesntExist()
     {
         // Arrange
         SeedTeacher(
-            ValidTeacher.Id,
-            ValidTeacher.Name);
+            ValidTeacher1.Id,
+            ValidTeacher1.Name);
         
         await Context.SaveChangesAsync();
         
         // Act
-        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher.Id);
+        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher1.Id);
 
         var result = await _enrollTeacherInCourseRequestValidator.ValidateAsync(enrollmentRequest, CancellationToken.None);
         
@@ -85,7 +85,7 @@ public class EnrollTeacherInCourseRequestValidatorTests : TeacherTestBase
     }
     
     [Fact]
-    public async Task Validator_ShouldBeInvalid_WhenTeacherDoesExist()
+    public async Task Validator_ShouldBeInvalid_WhenTeacherDoesntExist()
     {
         // Arrange
         SeedCourse(
@@ -95,13 +95,13 @@ public class EnrollTeacherInCourseRequestValidatorTests : TeacherTestBase
         await Context.SaveChangesAsync();
         
         // Act
-        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher.Id);
+        var enrollmentRequest = new EnrollTeacherInCourseRequest(ValidCourse.Id, ValidTeacher1.Id);
 
         var result = await _enrollTeacherInCourseRequestValidator.ValidateAsync(enrollmentRequest, CancellationToken.None);
         
         // Assert
         Assert.False(result.IsValid);
         Assert.Single(result.Errors);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Teacher), ValidTeacher.Id));
+        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Teacher), ValidTeacher1.Id));
     }
 }
