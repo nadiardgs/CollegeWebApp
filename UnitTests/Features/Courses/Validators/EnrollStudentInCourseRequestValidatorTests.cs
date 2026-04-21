@@ -86,10 +86,11 @@ public class EnrollStudentInCourseRequestValidatorTests : StudentTestBase
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Equal(2, result.Errors.Count);
         Assert.Contains(result.Errors,
             e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Course), ValidCourse.Id));
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.NoTeacherAssigned(ValidCourse.Id)); 
+        Assert.Contains(result.Errors, 
+            e => e.ErrorMessage == ReturnMessages.NoTeacherAssigned(ValidCourse.Id));
+        Assert.Equal(2, result.Errors.Count);
     }
     
     [Fact]

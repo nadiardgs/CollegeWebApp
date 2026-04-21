@@ -22,7 +22,7 @@ public class EnrollStudentInCourseRequestValidator : AbstractValidator<EnrollStu
             .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Student), request.StudentId));
         
         RuleFor(request => request)
-            .MustAsync((request, ct) => context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct)) 
+            .MustAsync(async(request, ct) => !await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, ct)) 
             .WithMessage(request => ReturnMessages.AlreadyEnrolled(request.StudentId, request.CourseId));
         
         RuleFor(request => request.CourseId)

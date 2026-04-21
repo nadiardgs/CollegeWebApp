@@ -11,7 +11,7 @@ public abstract class SqliteTestBase : IAsyncDisposable
 
     protected SqliteTestBase()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
+        _connection = new SqliteConnection($"DataSource={Guid.NewGuid()};Mode=Memory;Cache=Shared");        
         _connection.Open();
     
         var options = new DbContextOptionsBuilder<CollegeDbContext>()

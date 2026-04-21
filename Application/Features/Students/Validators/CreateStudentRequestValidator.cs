@@ -17,7 +17,7 @@ public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequ
             .NotEmpty()
             .MinimumLength(3)
             .WithMessage(ReturnMessages.MinLength(nameof(Student)))
-            .MustAsync((request, id, ct) => context.Students.IsNameUniqueAsync(request.Name, null, ct))
+            .MustAsync(async (name, ct) => await context.Students.IsNameUniqueAsync(name, null, ct))
             .WithMessage(request => ReturnMessages.UniqueName(nameof(Student), request.Name));
     }
     
