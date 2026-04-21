@@ -14,17 +14,35 @@ public class TeacherTestBase : SqliteTestBase
         Context.Courses.Add(new Course() { Id = id, Title = title });
     }
 
-    protected void SeedCourseWithTeacher(int id, string title)
+    protected void SeedCourseWithTeacher(int courseId, string courseTitle, int teacherId, string teacherName)
     {
         Context.Courses.Add(new Course()
         {
-            Id = id,
-            Title = title,
+            Id = courseId,
+            Title = courseTitle,
             Teacher = new Teacher
             {
-                Id = ValidTeacher.Id,
-                Name =  ValidTeacher.Name
+                Id = teacherId,
+                Name = teacherName
             }
+        });
+    }
+
+    protected void SeedCourse(int courseId, string courseTitle)
+    {
+        Context.Courses.Add(new Course()
+        {
+            Id = courseId,
+            Title = courseTitle
+        });
+    }
+
+    protected void SeedTeacher(int teacherId, string teacherName)
+    {
+        Context.Teachers.Add(new Teacher()
+        {
+            Id = teacherId,
+            Name = teacherName
         });
     }
 }

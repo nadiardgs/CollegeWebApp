@@ -2,10 +2,8 @@ using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Domain.Entities;
 using Infrastructure;
-using Infrastructure.Extensions.Courses;
-using Infrastructure.Extensions.Enrollments;
-using Infrastructure.Extensions.Students;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
@@ -15,22 +13,33 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
 {
     public async Task<StudentEnrollmentDto> Handle(EnrollStudentInCourseRequest request, CancellationToken cancellationToken)
     {
-        var courseExists = await context.Courses.IdExistsAsync(request.CourseId, cancellationToken);
-        if (!courseExists) 
+        var info = await context.Courses
+            .Where(c => c.Id == request.CourseId)
+            .Select(c => new
+            {
+                CourseTitle = c.Title,
+                HasTeacher = c.TeacherId != null && c.TeacherId != 0,
+                Student = context.Students
+                    .Where(s => s.Id == request.StudentId)
+                    .Select(s => new { s.Name })
+                    .FirstOrDefault(),
+                IsAlreadyEnrolled = context.Enrollments
+                    .Any(e => e.StudentId == request.StudentId && e.CourseId == request.CourseId)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (info == null) 
             throw new EntityNotFoundException(nameof(Course), request.CourseId);
-
-        var studentExists = await context.Students.IdExistsAsync(request.StudentId, cancellationToken);
-        if (!studentExists) 
+    
+        if (info.Student == null) 
             throw new EntityNotFoundException(nameof(Student), request.StudentId);
-
-        var alreadyEnrolled = await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, cancellationToken);
-        if (alreadyEnrolled)
+    
+        if (info.IsAlreadyEnrolled) 
             throw new StudentAlreadyEnrolledException(request.StudentId, request.CourseId);
-        
-        var hasTeacherAssigned = await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken);
-        if (!hasTeacherAssigned)
+    
+        if (!info.HasTeacher) 
             throw new NoTeacherAssignedException(request.CourseId);
-
+        
         var enrollment = new Enrollment
         {
             StudentId = request.StudentId,
@@ -41,13 +50,11 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
         context.Enrollments.Add(enrollment);
         await context.SaveChangesAsync(cancellationToken);
 
-        var result = new StudentEnrollmentDto(
+        return new StudentEnrollmentDto(
             enrollment.Id,
-            enrollment.Student.Id,
-            enrollment.Student.Name,
-            enrollment.Course.Id,
-            enrollment.Course.Title);
-
-        return result;
+            request.StudentId,
+            info.Student.Name,
+            request.CourseId,
+            info.CourseTitle);
     }
 }
