@@ -7,7 +7,8 @@ namespace UnitTests.TestBases.Teachers;
 public class TeacherTestBase : SqliteTestBase
 {
     protected readonly CourseDto ValidCourse = new(1, "Test Course");
-    protected readonly TeacherDto ValidTeacher = new(1, "Test Teacher");
+    protected readonly TeacherDto ValidTeacher1 = new(1, "Test Teacher");
+    protected readonly TeacherDto ValidTeacher2 = new(2, "Test Teacher2");
     
     protected void SeedCourseWithoutTeacher(int id, string title)
     {
