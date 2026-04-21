@@ -2,4 +2,7 @@ using Application.Constants;
 
 namespace Application.Exceptions;
 
-public class NoTeacherAssignedException(int courseId) : Exception(ReturnMessages.NoTeacherAssigned(courseId));
+public class NoTeacherAssignedException(int courseId) : Exception(ReturnMessages.NoTeacherAssigned(courseId))
+{
+    public int CourseId { get; } = courseId;
+}

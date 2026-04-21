@@ -27,8 +27,13 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         var statusCode = exception switch
         {
             EntityNotFoundException => HttpStatusCode.NotFound,
+            MinLengthException => HttpStatusCode.BadRequest,
+            NoTeacherAssignedException => HttpStatusCode.Conflict,
+            StudentAlreadyEnrolledException  => HttpStatusCode.Conflict,
+            TeacherAlreadyAssignedException  => HttpStatusCode.Conflict,
             ValidationException => HttpStatusCode.BadRequest,
             UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+            UniqueNameException => HttpStatusCode.Conflict,
             _ => HttpStatusCode.InternalServerError
         };
 
