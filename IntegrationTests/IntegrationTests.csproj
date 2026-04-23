@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.7" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.5" />
         <PackageReference Include="xunit" Version="2.9.3" />
@@ -23,6 +24,12 @@
 
     <ItemGroup>
         <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Data.Sqlite">
+        <HintPath>..\..\..\.nuget\packages\microsoft.data.sqlite.core\10.0.5\lib\net8.0\Microsoft.Data.Sqlite.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

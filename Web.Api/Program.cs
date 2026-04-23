@@ -19,14 +19,7 @@ builder.Services.AddMediatR(cfg => {
 
 builder.Services.AddDbContext<CollegeDbContext>(options =>
 {
-    if (builder.Environment.IsEnvironment("Testing"))
-    {
-        options.UseInMemoryDatabase("TestingDb");
-    }
-    else
-    {
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-    }
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
