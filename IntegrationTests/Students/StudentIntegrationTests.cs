@@ -49,6 +49,10 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        
+        Assert.NotNull(errorResponse);
+        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(Student)));
     }
     
     [Fact]
@@ -176,11 +180,11 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(student)));
+        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(Student)));
     }
     
     [Fact]
-    public async Task Update_ShouldReturnNotFound_WhenStudentDoesntExist()
+    public async Task Update_ShouldReturnBadRequest_WhenStudentDoesntExist()
     {
         // Arrange
         var invalidId = 999;

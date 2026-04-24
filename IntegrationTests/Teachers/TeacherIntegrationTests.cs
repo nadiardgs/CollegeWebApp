@@ -185,7 +185,7 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
     
     [Fact]
-    public async Task Update_ShouldReturnNotFound_WhenTeacherDoesntExist()
+    public async Task Update_ShouldReturnBadRequest_WhenTeacherDoesntExist()
     {
         // Arrange
         var invalidId = 999;
