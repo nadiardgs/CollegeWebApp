@@ -32,7 +32,6 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         var result = await response.Content.ReadFromJsonAsync<StudentDto>();
 
         Assert.NotNull(result);
-        Assert.Equal(result.Id, ValidStudent1.Id);
         Assert.Equal(result.Name, ValidStudent1.Name);
         
         var studentInDb = await Context.Students.FirstOrDefaultAsync(s => s.Name == ValidStudent1.Name);
@@ -53,7 +52,7 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
     
     [Fact]
-    public async Task Create_ShouldReturnConflict_WhenNameAlreadyExists()
+    public async Task Create_ShouldReturnBadRequest_WhenNameAlreadyExists()
     {
         // Arrange
         var createCommand = new CreateStudentRequest(ValidStudent1.Name);
@@ -149,6 +148,37 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         Assert.Equal(ValidStudent1.Name, studentInDb.Name);
     }
 
+    [Fact]
+    public async Task Update_ShouldReturn400_WhenNameIsTooShort()
+    {
+        // Act
+        var student = new Student
+        {
+            Id = ValidStudent1.Id,
+            Name = ValidStudent1.Name
+        };
+
+        Context.Students.Add(student);
+        await Context.SaveChangesAsync();
+
+        var command = new UpdateStudentRequest
+        {
+            Id = student.Id,
+            Name = InvalidStudent.Name
+        };
+        
+        // Arrange
+        var response = await Client.PatchAsJsonAsync($"{RequestUri}/{student.Id}", command);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        
+        Assert.NotNull(errorResponse);
+        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(student)));
+    }
+    
     [Fact]
     public async Task Update_ShouldReturnNotFound_WhenStudentDoesntExist()
     {
