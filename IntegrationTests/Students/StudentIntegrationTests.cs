@@ -4,7 +4,9 @@ using Application.Features.Students.Requests;
 using Application.Features.Students.Responses;
 using Application.Models;
 using Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 
 namespace IntegrationTests.Students;
 
@@ -12,7 +14,7 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
 {
     private const string RequestUri = "/api/students";
     private static readonly StudentDto ValidStudent1 = new (1, "John Doe");
-    private static readonly StudentDto ValidStudent2 = new (1, "Jane Doe");
+    private static readonly StudentDto ValidStudent2 = new (2, "Jane Doe");
     private static readonly StudentDto InvalidStudent = new (1, "Jo");
 
     [Fact]
@@ -26,6 +28,15 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var result = await response.Content.ReadFromJsonAsync<StudentDto>();
+
+        Assert.NotNull(result);
+        Assert.Equal(result.Id, ValidStudent1.Id);
+        Assert.Equal(result.Name, ValidStudent1.Name);
+        
+        var studentInDb = await Context.Students.FirstOrDefaultAsync(s => s.Name == ValidStudent1.Name);
+        Assert.NotNull(studentInDb);
     }
 
     [Fact]
@@ -39,6 +50,136 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task Create_ShouldReturnConflict_WhenNameAlreadyExists()
+    {
+        // Arrange
+        var createCommand = new CreateStudentRequest(ValidStudent1.Name);
+
+        var createResponse = await Client.PostAsJsonAsync(RequestUri, createCommand);
+        
+        await createResponse.Content.ReadFromJsonAsync<StudentDto>();
+
+        var errorCommand = new CreateStudentRequest(ValidStudent1.Name);
+        
+        // Act
+        var errorResponse = await Client.PostAsJsonAsync(RequestUri, errorCommand);
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, errorResponse.StatusCode);
+        
+        var response = await errorResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        
+        Assert.NotNull(response);
+        Assert.Equal(response.Errors["Name"][0], ReturnMessages.UniqueName(nameof(Student), ValidStudent1.Name));
+    }
+
+    [Fact]
+    public async Task Update_ShouldReturnOk_WhenStudentExists()
+    {
+        // Arrange
+        var student = new Student
+        {
+            Id = ValidStudent1.Id,
+            Name = ValidStudent1.Name
+        };
+
+        Context.Students.Add(student);
+        await Context.SaveChangesAsync();
+
+        var updatedStudent = new UpdateStudentRequest
+        {
+            Id = ValidStudent1.Id,
+            Name = ValidStudent2.Name
+        };
+        
+        // Act
+        var response = await Client.PatchAsJsonAsync($"{RequestUri}/{ValidStudent1.Id}", updatedStudent);
+        
+        // Assert
+        response.EnsureSuccessStatusCode();
+        
+        var result = await response.Content.ReadFromJsonAsync<StudentDto>();
+        
+        Assert.NotNull(result);
+        
+        Context.ChangeTracker.Clear();
+        var studentInDb = await Context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Name == ValidStudent2.Name);
+        
+        Assert.NotNull(studentInDb);
+        Assert.Equal(ValidStudent1.Id, studentInDb.Id);
+        Assert.Equal(ValidStudent2.Name, studentInDb.Name);
+    }
+    
+    [Fact]
+    public async Task Update_ShouldReturnOk_WhenStudentExistsAndHasSameName()
+    {
+        // Arrange
+        var student = new Student
+        {
+            Id = ValidStudent1.Id,
+            Name = ValidStudent1.Name
+        };
+
+        Context.Students.Add(student);
+        await Context.SaveChangesAsync();
+
+        var updatedStudent = new UpdateStudentRequest
+        {
+            Id = student.Id,
+            Name = student.Name
+        };
+        
+        // Act
+        var response = await Client.PatchAsJsonAsync($"{RequestUri}/{student.Id}", updatedStudent);
+        
+        // Assert
+        response.EnsureSuccessStatusCode();
+        
+        var result = await response.Content.ReadFromJsonAsync<StudentDto>();
+        
+        Assert.NotNull(result);
+        
+        Context.ChangeTracker.Clear();
+        var studentInDb = await Context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == ValidStudent1.Id);
+
+        Assert.NotNull(studentInDb);
+        Assert.Equal(ValidStudent1.Name, studentInDb.Name);
+    }
+
+    [Fact]
+    public async Task Update_ShouldReturnNotFound_WhenStudentDoesntExist()
+    {
+        // Arrange
+        var invalidId = 999;
+        
+        var student = new Student
+        {
+            Id = ValidStudent1.Id,
+            Name = ValidStudent1.Name
+        };
+
+        Context.Students.Add(student);
+        await Context.SaveChangesAsync();
+
+        var updatedStudent = new UpdateStudentRequest
+        {
+            Id = invalidId,
+            Name = student.Name
+        };
+        
+        // Act
+        var response = await Client.PatchAsJsonAsync($"{RequestUri}/{invalidId}", updatedStudent);
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        
+        Assert.NotNull(errorResponse);
+        Assert.Equal(errorResponse.Errors["Id"][0], ReturnMessages.EntityNotFound(nameof(Student), invalidId));
     }
     
     [Fact]
@@ -81,6 +222,7 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         var result = await response.Content.ReadFromJsonAsync<ApiResult<IEnumerable<StudentDto>>>();
         
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
         Assert.Empty(result.Data);
         Assert.Equal(ReturnMessages.CollectionNotFound(nameof(Student)), result.Message);
     }
