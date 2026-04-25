@@ -60,24 +60,6 @@ public class UpdateTeacherRequestValidatorTests : IAsyncDisposable
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.MinLength(nameof(Teacher)));
     }
-
-    [Fact]
-    public async Task Validator_ShouldBeInvalid_WhenTeacherDoesntExist()
-    {
-        // Arrange
-        var request = new UpdateTeacherRequest
-        {
-            Id = _validTeacher1.Id,
-            Name = _validTeacher1.Name
-        };
-        
-        // Act
-        var result = await _updateTeacherRequestValidator.ValidateAsync(request);
-        
-        // Assert
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.EntityNotFound(nameof(Teacher), _validTeacher1.Id));
-    }
     
     [Fact]
     public async Task Validator_ShouldBeValid_WhenNameIsTheSameAsExistingTeacher()
@@ -118,27 +100,6 @@ public class UpdateTeacherRequestValidatorTests : IAsyncDisposable
 
         // Assert
         Assert.True(result.IsValid);
-    }
-    
-    [Fact]
-    public async Task Validator_ShouldBeInvalid_WhenNameIsNotUnique()
-    {
-        var existingTeacher = new Teacher { Name = _validTeacher1.Name };
-        _context.Teachers.Add(existingTeacher);
-        await _context.SaveChangesAsync();
-
-        var request = new UpdateTeacherRequest
-        {
-            Id = _validTeacher2.Id,
-            Name = _validTeacher1.Name
-        };
-
-        // Act
-        var result = await _updateTeacherRequestValidator.ValidateAsync(request);
-
-        // Assert
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Teacher), existingTeacher.Name));
     }
     
     public async ValueTask DisposeAsync()

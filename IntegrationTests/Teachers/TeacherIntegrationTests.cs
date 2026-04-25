@@ -39,7 +39,7 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
 
     [Fact]
-    public async Task Create_ShouldReturn400_WhenNameIsTooShort()
+    public async Task Create_ShouldReturnBadRequest_WhenNameIsTooShort()
     {
         // Act
         var command = new CreateTeacherRequest(InvalidTeacher.Name);
@@ -154,7 +154,7 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
     
     [Fact]
-    public async Task Update_ShouldReturn400_WhenNameIsTooShort()
+    public async Task Update_ShouldReturnBadRequest_WhenNameIsTooShort()
     {
         // Act
         var teacher = new Teacher
@@ -186,7 +186,7 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
     
     [Fact]
-    public async Task Update_ShouldReturnBadRequest_WhenTeacherDoesntExist()
+    public async Task Update_ShouldReturnNotFound_WhenTeacherDoesntExist()
     {
         // Arrange
         var invalidId = 999;
@@ -210,7 +210,7 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
         var response = await Client.PatchAsJsonAsync($"{RequestUri}/{invalidId}", updatedTeacher);
         
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         
         var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(errorResponse);

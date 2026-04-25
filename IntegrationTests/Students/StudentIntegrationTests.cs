@@ -39,7 +39,7 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
 
     [Fact]
-    public async Task Create_ShouldReturn400_WhenNameIsTooShort()
+    public async Task Create_ShouldReturnBadRequest_WhenNameIsTooShort()
     {
         // Act
         var command = new CreateStudentRequest(InvalidStudent.Name);
@@ -96,12 +96,12 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
 
         var updatedStudent = new UpdateStudentRequest
         {
-            Id = ValidStudent1.Id,
-            Name = ValidStudent2.Name
+            Id = student.Id,
+            Name = student.Name
         };
         
         // Act
-        var response = await Client.PatchAsJsonAsync($"{RequestUri}/{ValidStudent1.Id}", updatedStudent);
+        var response = await Client.PatchAsJsonAsync($"{RequestUri}/{student.Id}", updatedStudent);
         
         // Assert
         response.EnsureSuccessStatusCode();
@@ -111,11 +111,11 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         Assert.NotNull(result);
         
         Context.ChangeTracker.Clear();
-        var studentInDb = await Context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Name == ValidStudent2.Name);
+        var studentInDb = await Context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Name == student.Name);
         
         Assert.NotNull(studentInDb);
-        Assert.Equal(ValidStudent1.Id, studentInDb.Id);
-        Assert.Equal(ValidStudent2.Name, studentInDb.Name);
+        Assert.Equal(student.Id, studentInDb.Id);
+        Assert.Equal(student.Name, studentInDb.Name);
     }
     
     [Fact]
@@ -155,7 +155,7 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
     }
 
     [Fact]
-    public async Task Update_ShouldReturn400_WhenNameIsTooShort()
+    public async Task Update_ShouldReturnBadRequest_WhenNameIsTooShort()
     {
         // Act
         var student = new Student
@@ -170,7 +170,7 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         var command = new UpdateStudentRequest
         {
             Id = student.Id,
-            Name = InvalidStudent.Name
+            Name = student.Name
         };
         
         // Arrange

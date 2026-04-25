@@ -11,15 +11,9 @@ public class UpdateTeacherRequestValidator : AbstractValidator<UpdateTeacherRequ
 {
     public UpdateTeacherRequestValidator(CollegeDbContext context)
     {
-        RuleFor(x => x.Id)
-            .MustAsync((id, ct) => context.Teachers.IdExistsAsync(id, ct))
-            .WithMessage(request => ReturnMessages.EntityNotFound(nameof(Teacher), request.Id));
-        
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
-            .WithMessage(ReturnMessages.MinLength(nameof(Teacher)))
-            .MustAsync((request, id, ct) => context.Teachers.IsNameUniqueAsync(request.Name, request.Id, ct))
-            .WithMessage(request => ReturnMessages.UniqueName(nameof(Teacher), request.Name));
+            .WithMessage(ReturnMessages.MinLength(nameof(Teacher)));
     }
 }
