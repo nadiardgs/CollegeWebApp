@@ -43,25 +43,4 @@ public class CreateStudentRequestValidatorTests : StudentTestBase
         // Assert
         Assert.True(result.IsValid);
     }
-    
-    [Fact]
-    public async Task Validator_ShouldBeInvalid_WhenNameIsNotUnique()
-    {
-        var existingStudent = new Student
-        {
-            Name = ValidStudent1.Name
-        };
-        
-        Context.Students.Add(existingStudent);
-        await Context.SaveChangesAsync();
-
-        var request = new CreateStudentRequest(ValidStudent1.Name);
-
-        // Act
-        var result = await _createStudentRequestValidator.ValidateAsync(request);
-
-        // Assert
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Student), existingStudent.Name));
-    }
 }

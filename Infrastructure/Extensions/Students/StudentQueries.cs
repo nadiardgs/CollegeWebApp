@@ -14,7 +14,7 @@ public static class StudentQueries
         }
 
         public async Task<bool> IdExistsAsync(int id, CancellationToken ct)
-        {
+        { 
             return await students.AsNoTracking().AnyAsync(s => s.Id == id, ct);
         }
     }

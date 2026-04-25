@@ -49,14 +49,16 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         
+        var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(Student)));
+        
+        Assert.NotNull(response);
+        Assert.Equal(ReturnMessages.MinLength(nameof(Student)), errorResponse.Detail);
     }
     
     [Fact]
-    public async Task Create_ShouldReturnBadRequest_WhenNameAlreadyExists()
+    public async Task Create_ShouldReturnConflict_WhenNameAlreadyExists()
     {
         // Arrange
         var createCommand = new CreateStudentRequest(ValidStudent1.Name);
@@ -71,12 +73,12 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         var errorResponse = await Client.PostAsJsonAsync(RequestUri, errorCommand);
         
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, errorResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, errorResponse.StatusCode);
         
-        var response = await errorResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var response = await errorResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+    
         Assert.NotNull(response);
-        Assert.Equal(response.Errors["Name"][0], ReturnMessages.UniqueName(nameof(Student), ValidStudent1.Name));
+        Assert.Equal(ReturnMessages.UniqueName(nameof(Student), ValidStudent1.Name), response.Detail);
     }
 
     [Fact]
@@ -177,14 +179,14 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         
-        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+    
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(Student)));
+        Assert.Equal(ReturnMessages.MinLength(nameof(Student)), errorResponse.Detail);
     }
     
     [Fact]
-    public async Task Update_ShouldReturnBadRequest_WhenStudentDoesntExist()
+    public async Task Update_ShouldReturnNotFound_WhenStudentDoesntExist()
     {
         // Arrange
         var invalidId = 999;
@@ -208,12 +210,12 @@ public class StudentIntegrationTests(WebApplicationFactory<Program> factory) : I
         var response = await Client.PatchAsJsonAsync($"{RequestUri}/{invalidId}", updatedStudent);
         
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         
-        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Id"][0], ReturnMessages.EntityNotFound(nameof(Student), invalidId));
+        Assert.Equal(ReturnMessages.EntityNotFound(nameof(Student), invalidId), errorResponse.Detail);
     }
     
     [Fact]

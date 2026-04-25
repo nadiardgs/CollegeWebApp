@@ -11,14 +11,9 @@ public class CreateStudentRequestValidator : AbstractValidator<CreateStudentRequ
 {
     public CreateStudentRequestValidator(CollegeDbContext dbContext)
     {
-        var context = dbContext;
-
         RuleFor(x => x.Name)
             .NotEmpty()
             .MinimumLength(3)
-            .WithMessage(ReturnMessages.MinLength(nameof(Student)))
-            .MustAsync(async (name, ct) => await context.Students.IsNameUniqueAsync(name, null, ct))
-            .WithMessage(request => ReturnMessages.UniqueName(nameof(Student), request.Name));
+            .WithMessage(ReturnMessages.MinLength(nameof(Student)));
     }
-    
 }

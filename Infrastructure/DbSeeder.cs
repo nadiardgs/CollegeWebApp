@@ -7,7 +7,14 @@ public static class DbSeeder
 {
     public static async Task SeedAsync(CollegeDbContext context)
     {
-        await context.Database.MigrateAsync();
+        if (await context.Database.CanConnectAsync())
+        {
+            var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+            {
+                await context.Database.MigrateAsync();
+            }
+        }
 
         if (await context.Teachers.AnyAsync()) return;
 

@@ -50,14 +50,14 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         
-        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(Teacher)));
+        
+        Assert.Equal(ReturnMessages.MinLength(nameof(Teacher)), errorResponse.Detail);
     }
     
     [Fact]
-    public async Task Create_ShouldReturnBadRequest_WhenNameAlreadyExists()
+    public async Task Create_ShouldReturnConflict_WhenNameAlreadyExists()
     {
         // Arrange
         var createCommand = new CreateTeacherRequest(ValidTeacher1.Name);
@@ -72,12 +72,12 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
         var errorResponse = await Client.PostAsJsonAsync(RequestUri, errorCommand);
         
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, errorResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, errorResponse.StatusCode);
         
-        var response = await errorResponse.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var response = await errorResponse.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(response);
-        Assert.Equal(response.Errors["Name"][0], ReturnMessages.UniqueName(nameof(Teacher), ValidTeacher1.Name));
+        
+        Assert.Equal(ReturnMessages.UniqueName(nameof(Teacher), ValidTeacher1.Name), response.Detail);
     }
     
     [Fact]
@@ -178,10 +178,11 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         
-        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Name"][0], ReturnMessages.MinLength(nameof(Teacher)));
+        
+        Assert.NotNull(response);
+        Assert.Equal(ReturnMessages.MinLength(nameof(Teacher)), errorResponse.Detail);
     }
     
     [Fact]
@@ -211,10 +212,11 @@ public class TeacherIntegrationTests(WebApplicationFactory<Program> factory) : I
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         
-        var errorResponse = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        
+        var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(errorResponse);
-        Assert.Equal(errorResponse.Errors["Id"][0], ReturnMessages.EntityNotFound(nameof(Teacher), invalidId));
+        
+        Assert.NotNull(response);
+        Assert.Equal(ReturnMessages.EntityNotFound(nameof(Teacher), invalidId), errorResponse.Detail);
     }
     
     [Fact]

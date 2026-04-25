@@ -56,24 +56,6 @@ public class CreateTeacherRequestValidatorTests : IAsyncDisposable
         Assert.True(result.IsValid);
     }
 
-    [Fact]
-    public async Task Validator_ShouldBeInvalid_WhenNameIsNotUnique()
-    {
-        var existingTeacher = new Teacher { Name = _validTeacher.Name };
-        _context.Teachers.Add(existingTeacher);
-        await _context.SaveChangesAsync();
-
-        var request = new CreateTeacherRequest(_validTeacher.Name);
-
-        // Act
-        var result = await _createTeacherRequestValidator.ValidateAsync(request);
-
-        // Assert
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors,
-            e => e.ErrorMessage == ReturnMessages.UniqueName(nameof(Teacher), existingTeacher.Name));
-    }
-
     public async ValueTask DisposeAsync()
     {
         await _context.DisposeAsync();

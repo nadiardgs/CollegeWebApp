@@ -4,7 +4,6 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using WebApplication3;
-using WebApplication3.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,9 +28,8 @@ builder.Services.AddOpenApi("v1");
 
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseExceptionHandler(); 
+app.UseExceptionHandler();
+app.UseHttpsRedirection();
 
 if (app.Environment.IsDevelopment())
 {
