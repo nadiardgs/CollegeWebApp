@@ -2,8 +2,10 @@ using Application.Exceptions;
 using Application.Features.Courses.Responses;
 using Domain.Entities;
 using Infrastructure;
+using Infrastructure.Extensions.Courses;
+using Infrastructure.Extensions.Enrollments;
+using Infrastructure.Extensions.Students;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Courses.Requests;
 
@@ -13,23 +15,18 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
 {
     public async Task<StudentEnrollmentDto> Handle(EnrollStudentInCourseRequest request, CancellationToken cancellationToken)
     {
-        var course = await context.Courses
-            .FirstOrDefaultAsync(s => s.Id == request.CourseId, cancellationToken)
-            ?? throw new EntityNotFoundException(nameof(Course), request.CourseId);
-    
-        var student = await context.Students
-            .FirstOrDefaultAsync(s => s.Id == request.StudentId, cancellationToken)
-            ?? throw new EntityNotFoundException(nameof(Student), request.StudentId);
+        if (!await context.Students.IdExistsAsync(request.StudentId, cancellationToken))
+            throw new EntityNotFoundException(nameof(Student), request.StudentId);
 
-        if (course.TeacherId is null or 0)
+        if (!await context.Courses.IdExistsAsync(request.CourseId, cancellationToken))
+            throw new EntityNotFoundException(nameof(Course), request.CourseId);
+
+        if (!await context.Courses.HasTeacherAssignedAsync(request.CourseId, cancellationToken))
             throw new NoTeacherAssignedException(request.CourseId);
 
-        var alreadyEnrolled = await context.Enrollments
-            .AnyAsync(e => e.StudentId == request.StudentId && e.CourseId == request.CourseId, cancellationToken);
-
-        if (alreadyEnrolled)
+        if (await context.Enrollments.IsEnrolledAsync(request.StudentId, request.CourseId, cancellationToken))
             throw new StudentAlreadyEnrolledException(request.StudentId, request.CourseId);
-
+        
         var enrollment = new Enrollment
         {
             StudentId = request.StudentId,
@@ -42,9 +39,9 @@ public class EnrollStudentInCourseRequestHandler(CollegeDbContext context) : IRe
 
         return new StudentEnrollmentDto(
             enrollment.Id,
-            student.Id,
-            student.Name,
-            course.Id,
-            course.Title);
+            enrollment.Student.Id,
+            enrollment.Student.Name,
+            enrollment.Course.Id,
+            enrollment.Course.Title);
     }
 }

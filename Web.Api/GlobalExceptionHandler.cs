@@ -16,6 +16,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             UniqueNameException => HttpStatusCode.Conflict,
             EntityNotFoundException => HttpStatusCode.NotFound,
             CollectionNotFoundException => HttpStatusCode.NotFound,
+            NoTeacherAssignedException => HttpStatusCode.Conflict,
             TeacherAlreadyAssignedException => HttpStatusCode.Conflict,
             StudentAlreadyEnrolledException => HttpStatusCode.Conflict,
             FluentValidation.ValidationException => HttpStatusCode.BadRequest,
