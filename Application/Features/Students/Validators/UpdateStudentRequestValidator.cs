@@ -3,7 +3,6 @@ using Application.Features.Students.Requests;
 using Domain.Entities;
 using FluentValidation;
 using Infrastructure;
-using Infrastructure.Extensions.Students;
 
 namespace Application.Features.Students.Validators;
 
